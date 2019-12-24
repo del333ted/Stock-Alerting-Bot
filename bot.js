@@ -120,5 +120,5 @@ bot.catch((err, ctx) => {
 })
 
 bot.launch().then(() => {
-  console.log('bot start polling')
+  console.log('Bot started')
 })
