@@ -34,8 +34,11 @@ function commandArgument(text) {
   return parts[3] || false
 }
 
-bot.command('story', async (ctx) => {
-  if (!ctx.chat || !(ctx.chat.type === 'group' || ctx.chat.type === 'supergroup')) {
+bot.command('story', async ctx => {
+  if (
+    !ctx.chat ||
+    !(ctx.chat.type === 'group' || ctx.chat.type === 'supergroup')
+  ) {
     return ctx.reply('Используйте эту команду в группе.')
   }
   const text = commandArgument(ctx.message.text)
@@ -45,11 +48,11 @@ bot.command('story', async (ctx) => {
       timeout: 10000,
       throwHttpErrors: false,
     })
-  
+
     if (ctx.message.text) {
       ctx.replyWithChatAction('typing')
       const text = ctx.message.text
-  
+
       const mediumResult = await extend.post(
         'https://models.dobro.ai/gpt2/medium/',
         {
@@ -60,14 +63,14 @@ bot.command('story', async (ctx) => {
           },
         },
       )
-  
+
       if (
         mediumResult.body &&
         mediumResult.body.replies &&
         mediumResult.body.replies.length > 0
       ) {
         const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
-  
+
         ctx.replyWithHTML(result, {
           reply_to_message_id: ctx.message.message_id,
         })
@@ -77,7 +80,7 @@ bot.command('story', async (ctx) => {
 })
 
 bot.use(async (ctx, next) => {
-  if (!ctx.chat || ctx.chat.type === 'private') {
+  if (!ctx.chat || ctx.chat.type !== 'private') {
     return
   }
   const extend = got.extend({
@@ -113,6 +116,58 @@ bot.use(async (ctx, next) => {
       })
     }
   }
+})
+
+bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
+  const extend = got.extend({
+    responseType: 'json',
+    timeout: 10000,
+    throwHttpErrors: false,
+  })
+
+  if (inlineQuery.query) {
+    ctx.replyWithChatAction('typing')
+    const text = inlineQuery.query
+
+    const mediumResult = await extend.post(
+      'https://models.dobro.ai/gpt2/medium/',
+      {
+        json: {
+          prompt: text,
+          length: 60,
+          num_samples: 1,
+        },
+      },
+    )
+
+    if (
+      mediumResult.body &&
+      mediumResult.body.replies &&
+      mediumResult.body.replies.length > 0
+    ) {
+      const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
+
+      return answerInlineQuery([
+        {
+          type: 'article',
+          id: +new Date(),
+          title: 'История',
+          description: 'Кек',
+          thumb_url: 'thumbnail',
+          input_message_content: {
+            message_text: result,
+          },
+          reply_markup: Markup.inlineKeyboard([
+            Markup.urlButton('Go to recipe', href),
+          ]),
+        },
+      ])
+    }
+  }
+})
+
+bot.on('chosen_inline_result', ({ chosenInlineResult }) => {
+  console.log('chosen inline result', chosenInlineResult)
 })
 
 bot.catch((err, ctx) => {
