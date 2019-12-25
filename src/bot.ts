@@ -4,8 +4,26 @@ import { attachUser } from './helpers/attachUser'
 import { RequestModel, findRequest } from './models/Request'
 import { ChatModel } from './models/Chat'
 import { UserModel } from './models/User'
+import * as rateLimit from 'telegraf-ratelimit'
+
+const extend = got.extend({
+  responseType: 'json',
+  timeout: 10000,
+  throwHttpErrors: false,
+  headers: {
+    'User-Agent': 'telegram-bot @AIStoriesBot'
+  }
+})
 
 export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
+  bot.use(
+    rateLimit({
+      window: 8000,
+      limit: 1,
+      onLimitExceeded: (ctx, next) => ctx.reply('Я не могу так часто отвечать тебе. Пиши, пожалуйста, реже.'),
+    }),
+  )
+
   bot.use(attachUser)
 
   bot.start(async (ctx, next) => {
@@ -22,11 +40,11 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
 
   bot.command('stats', async ctx => {
     if (ctx.from.id === Number(process.env.OWNER_ID)) {
-      // Chats count 
+      // Chats count
       const Chats = await ChatModel.find().count()
       // Requests count
       const Requests = await RequestModel.find().count()
-      // Users Count 
+      // Users Count
       const Users = await UserModel.find().count()
       ctx.replyWithHTML(
         `<b>Статистика:</b>\n\nПользователей: ${Users}\n\nЧатов: ${Chats}\n\nЗапросов: ${Requests}`,
@@ -37,11 +55,6 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
   bot.on(
     'inline_query',
     async ({ message, inlineQuery, answerInlineQuery }) => {
-      const extend = got.extend({
-        responseType: 'json',
-        timeout: 10000,
-        throwHttpErrors: false,
-      })
 
       if (inlineQuery.query) {
         const text = inlineQuery.query
@@ -93,11 +106,6 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
     const text = ctx.message.text.substr(7)
 
     if (text) {
-      const extend = got.extend({
-        responseType: 'json',
-        timeout: 10000,
-        throwHttpErrors: false,
-      })
 
       if (ctx.message.text) {
         ctx.replyWithChatAction('typing')
@@ -132,11 +140,6 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
     if (!ctx.chat || ctx.chat.type !== 'private') {
       return
     }
-    const extend = got.extend({
-      responseType: 'json',
-      timeout: 10000,
-      throwHttpErrors: false,
-    })
 
     if (ctx.message.text) {
       ctx.replyWithChatAction('typing')
