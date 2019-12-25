@@ -21,11 +21,11 @@ async function requestAndAnswer(
   type: String,
 ) {
   ctx.replyWithChatAction('typing')
-  let mediumResult: any
+  let result: any
 
   switch (type) {
     case 'medium':
-      mediumResult = (await extend.post(
+      result = (await extend.post(
         'https://models.dobro.ai/gpt2/medium/',
         {
           json: {
@@ -36,8 +36,20 @@ async function requestAndAnswer(
         },
       )) as any
       break
+      case 'small':
+        result = (await extend.post(
+          'https://models.dobro.ai/gpt2/small/',
+          {
+            json: {
+              prompt: text,
+              length: 60,
+              num_samples: 1,
+            },
+          },
+        )) as any
+        break
     case 'poem':
-      mediumResult = (await extend.post(
+      result = (await extend.post(
         'https://models.dobro.ai/gpt2_poetry/',
         {
           json: {
@@ -47,12 +59,12 @@ async function requestAndAnswer(
         },
       )) as any
       if (
-        mediumResult.body &&
-        mediumResult.body.replies &&
-        mediumResult.body.replies.length > 0
+        result.body &&
+        result.body.replies &&
+        result.body.replies.length > 0
       ) {
-        const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
-        ctx.replyWithHTML(result, {
+        const finalResult = `<i>${text}</i>${result.body.replies[0]}`
+        ctx.replyWithHTML(finalResult, {
           reply_to_message_id: ctx.message.message_id,
         })
         return await findRequest(ctx.message.message_id)
@@ -60,7 +72,7 @@ async function requestAndAnswer(
       return
       break
     default:
-      mediumResult = (await extend.post(
+      result = (await extend.post(
         'https://models.dobro.ai/gpt2/medium/',
         {
           json: {
@@ -73,12 +85,12 @@ async function requestAndAnswer(
   }
 
   if (
-    mediumResult.body &&
-    mediumResult.body.replies &&
-    mediumResult.body.replies.length > 0
+    result.body &&
+    result.body.replies &&
+    result.body.replies.length > 0
   ) {
-    const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
-    ctx.replyWithHTML(result, {
+    const finalResult = `<i>${text}</i>${result.body.replies[0]}`
+    ctx.replyWithHTML(finalResult, {
       reply_to_message_id: ctx.message.message_id,
     })
     return await findRequest(ctx.message.message_id)
@@ -199,6 +211,24 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
       text = ctx.message.reply_to_message.text
     if (text) {
       requestAndAnswer(ctx, text, 'poem')
+    }
+  })
+
+  bot.command('experimental', async ctx => {
+    let text = ctx.message.text.substr(14)
+    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
+      text = ctx.message.reply_to_message.text
+    if (text) {
+      requestAndAnswer(ctx, text, 'small')
+    }
+  })
+
+  bot.hears(/\/experimental@AiStoriesBot/gm, async ctx => {
+    let text = ctx.message.text.substr(27)
+    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
+      text = ctx.message.reply_to_message.text
+    if (text) {
+      requestAndAnswer(ctx, text, 'small')
     }
   })
 
