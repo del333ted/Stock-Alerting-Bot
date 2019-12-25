@@ -172,7 +172,7 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
   })
 
   bot.command('stih', async ctx => {
-    let text = ctx.message.text.substr(6)
+    let text = ctx.message.text.substr(5)
     if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
       text = ctx.message.reply_to_message.text
     if (text) {
