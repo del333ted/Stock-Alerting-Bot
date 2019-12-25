@@ -22,7 +22,7 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
 
   bot.command('stats', async ctx => {
     if (ctx.from.id === Number(process.env.OWNER_ID)) {
-      // Chats count
+      // Chats count 
       const Chats = await ChatModel.find().count()
       // Requests count
       const Requests = await RequestModel.find().count()
