@@ -29,7 +29,7 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
       // Users Count
       const Users = await UserModel.find().count()
       ctx.replyWithHTML(
-        `<b>Статис тика:</b>\n\nПользователей: ${Users}\n\nЧатов: ${Chats}\n\nЗапросов: ${Requests}`,
+        `<b>Статистика:</b>\n\nПользователей: ${Users}\n\nЧатов: ${Chats}\n\nЗапросов: ${Requests}`,
       )
     }
   })
