@@ -86,13 +86,13 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
 
   bot.start(async (ctx, next) => {
     ctx.replyWithHTML(
-      `Привет, ${ctx.from.first_name}, я дополню твою историю с помощью магии нейросетей. Нужно лишь написать её начало из нескольких предложений. Чем четче будет сформулировано начало, тем лучше будет результат.\n\n/story <i>текст (опционально)</i> — команда для использования бота в чате или в реплае на сообщение для продолжения истории.\n\n<b>GitHub бота:</b> github.com/del333ted/AI-Stories\n\nБот это лишь "обертка" для взаимодействия с API. Авторство принадлежит оригинальному автору проекта и все благодарности необходимо отправлять ему.\n\nGitHub проекта: github.com/mgrankin/ru_transformers\nВеб-версия проекта: text.skynet.center\n\n<b>Автор бота:</b> @del333ted`,
+      `Привет, ${ctx.from.first_name}, я дополню твою историю с помощью магии нейросетей. Нужно лишь написать её начало из нескольких предложений. Чем четче будет сформулировано начало, тем лучше будет результат.\n\n/story <i>текст (опционально)</i> — команда для использования бота в чате или в реплае на сообщение для продолжения истории.\n/stih <i>текст (опционально)</i> — команда для создания стихотворений.\n\n<b>GitHub бота:</b> github.com/del333ted/AI-Stories\n\nБот это лишь "обертка" для взаимодействия с API. Авторство принадлежит оригинальному автору проекта и все благодарности необходимо отправлять ему.\n\nGitHub проекта: github.com/mgrankin/ru_transformers\nВеб-версия проекта: text.skynet.center\n\n<b>Автор бота:</b> @del333ted`,
     )
   })
 
   bot.command('help', async (ctx, next) => {
     ctx.replyWithHTML(
-      `Привет, ${ctx.from.first_name}, я дополню твою историю с помощью магии нейросетей. Нужно лишь написать её начало из нескольких предложений. Чем четче будет сформулировано начало, тем лучше будет результат.\n\n/story <i>текст (опционально)</i> — команда для использования бота в чате или в реплае на сообщение для продолжения истории.\n\n<b>GitHub бота:</b> github.com/del333ted/AI-Stories\n\nБот это лишь "обертка" для взаимодействия с API. Авторство принадлежит оригинальному автору проекта и все благодарности необходимо отправлять ему.\n\nGitHub проекта: github.com/mgrankin/ru_transformers\nВеб-версия проекта: text.skynet.center\n\n<b>Автор бота:</b> @del333ted`,
+      `Привет, ${ctx.from.first_name}, я дополню твою историю с помощью магии нейросетей. Нужно лишь написать её начало из нескольких предложений. Чем четче будет сформулировано начало, тем лучше будет результат.\n\n/story <i>текст (опционально)</i> — команда для использования бота в чате или в реплае на сообщение для продолжения истории.\n/stih <i>текст (опционально)</i> — команда для создания стихотворений.\n\n<b>GitHub бота:</b> github.com/del333ted/AI-Stories\n\nБот это лишь "обертка" для взаимодействия с API. Авторство принадлежит оригинальному автору проекта и все благодарности необходимо отправлять ему.\n\nGitHub проекта: github.com/mgrankin/ru_transformers\nВеб-версия проекта: text.skynet.center\n\n<b>Автор бота:</b> @del333ted`,
     )
   })
 
@@ -171,7 +171,7 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
     }
   })
 
-  bot.command('poem', async ctx => {
+  bot.command('stih', async ctx => {
     let text = ctx.message.text.substr(6)
     if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
       text = ctx.message.reply_to_message.text
@@ -180,7 +180,7 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
     }
   })
 
-  bot.hears(/\/poem@AiStoriesBot/gm, async ctx => {
+  bot.hears(/\/stih@AiStoriesBot/gm, async ctx => {
     let text = ctx.message.text.substr(19)
     if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
       text = ctx.message.reply_to_message.text
