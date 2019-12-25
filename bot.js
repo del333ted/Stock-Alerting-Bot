@@ -54,7 +54,7 @@ bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
       mediumResult.body.replies &&
       mediumResult.body.replies.length > 0
     ) {
-      const result = `<i>${text}</i>  ${mediumResult.body.replies[0]}`
+      const result = `<i>${text}</i> ${mediumResult.body.replies[0]}`
       return await answerInlineQuery([
         {
           type: 'article',
