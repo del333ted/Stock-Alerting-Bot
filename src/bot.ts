@@ -26,7 +26,7 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
       const Chats = await ChatModel.find().count()
       // Requests count
       const Requests = await RequestModel.find().count()
-      // Users Count
+      // Users Count 
       const Users = await UserModel.find().count()
       ctx.replyWithHTML(
         `<b>Статистика:</b>\n\nПользователей: ${Users}\n\nЧатов: ${Chats}\n\nЗапросов: ${Requests}`,
