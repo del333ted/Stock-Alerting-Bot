@@ -3,6 +3,7 @@ import { Telegraf, ContextMessageUpdate, Markup as m, Extra } from 'telegraf'
 import { attachUser } from './helpers/attachUser'
 import { RequestModel } from './models/Request'
 import { ChatModel } from './models/Chat'
+import { UserModel } from './models/User'
 
 export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
   bot.use(attachUser)
@@ -25,7 +26,9 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
       const Chats = await ChatModel.find().count()
       // Requests count
       const Requests = await RequestModel.find().count()
-      ctx.reply(`Чатов: ${Chats}\n\nЗапросов: ${Requests}`)
+      // Users Count
+      const Users = await UserModel.find().count()
+      ctx.reply(`Пользователей: ${Users}\n\nЧатов: ${Chats}\n\nЗапросов: ${Requests}`)
     }
   })
 
