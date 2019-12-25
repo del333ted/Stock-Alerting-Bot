@@ -11,23 +11,66 @@ const extend = got.extend({
   timeout: 10000,
   throwHttpErrors: false,
   headers: {
-    'User-Agent': 'telegram-bot @AIStoriesBot'
-  }
+    'User-Agent': 'telegram-bot @AIStoriesBot',
+  },
 })
 
-async function requestAndAnswer(ctx: ContextMessageUpdate, text: String) {
+async function requestAndAnswer(
+  ctx: ContextMessageUpdate,
+  text: String,
+  type: String,
+) {
   ctx.replyWithChatAction('typing')
+  let mediumResult: any
 
-  const mediumResult = (await extend.post(
-    'https://models.dobro.ai/gpt2/medium/',
-    {
-      json: {
-        prompt: text,
-        length: 60,
-        num_samples: 1,
-      },
-    },
-  )) as any
+  switch (type) {
+    case 'medium':
+      mediumResult = (await extend.post(
+        'https://models.dobro.ai/gpt2/medium/',
+        {
+          json: {
+            prompt: text,
+            length: 60,
+            num_samples: 1,
+          },
+        },
+      )) as any
+      break
+    case 'poem':
+      mediumResult = (await extend.post(
+        'https://models.dobro.ai/gpt2_poetry/',
+        {
+          json: {
+            prompt: text,
+            length: 150,
+          },
+        },
+      )) as any
+      if (
+        mediumResult.body &&
+        mediumResult.body.replies &&
+        mediumResult.body.replies.length > 0
+      ) {
+        const result = `<i>${text}</i>\n${mediumResult.body.replies[0]}`
+        ctx.replyWithHTML(result, {
+          reply_to_message_id: ctx.message.message_id,
+        })
+        return await findRequest(ctx.message.message_id)
+      }
+      return
+      break
+    default:
+      mediumResult = (await extend.post(
+        'https://models.dobro.ai/gpt2/medium/',
+        {
+          json: {
+            prompt: text,
+            length: 60,
+            num_samples: 1,
+          },
+        },
+      )) as any
+  }
 
   if (
     mediumResult.body &&
@@ -47,7 +90,8 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
     rateLimit({
       window: 8000,
       limit: 1,
-      onLimitExceeded: (ctx, next) => ctx.reply('Я не могу так часто отвечать тебе. Пиши, пожалуйста, реже.'),
+      onLimitExceeded: (ctx, next) =>
+        ctx.reply('Я не могу так часто отвечать тебе. Пиши, пожалуйста, реже.'),
     }),
   )
 
@@ -82,7 +126,6 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
   bot.on(
     'inline_query',
     async ({ message, inlineQuery, answerInlineQuery }) => {
-
       if (inlineQuery.query) {
         const text = inlineQuery.query
         const mediumResult = (await extend.post(
@@ -125,17 +168,37 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
 
   bot.command('story', async ctx => {
     let text = ctx.message.text.substr(7)
-    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text) text = ctx.message.reply_to_message.text
+    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
+      text = ctx.message.reply_to_message.text
     if (text) {
-      requestAndAnswer(ctx, text)
+      requestAndAnswer(ctx, text, 'medium')
     }
   })
 
   bot.hears(/\/story@AiStoriesBot/gm, async ctx => {
     let text = ctx.message.text.substr(20)
-    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text) text = ctx.message.reply_to_message.text
+    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
+      text = ctx.message.reply_to_message.text
     if (text) {
-      requestAndAnswer(ctx, text)
+      requestAndAnswer(ctx, text, 'medium')
+    }
+  })
+
+  bot.command('poem', async ctx => {
+    let text = ctx.message.text.substr(6)
+    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
+      text = ctx.message.reply_to_message.text
+    if (text) {
+      requestAndAnswer(ctx, text, 'poem')
+    }
+  })
+
+  bot.hears(/\/poem@AiStoriesBot/gm, async ctx => {
+    let text = ctx.message.text.substr(19)
+    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
+      text = ctx.message.reply_to_message.text
+    if (text) {
+      requestAndAnswer(ctx, text, 'poem')
     }
   })
 
@@ -146,7 +209,7 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
     if (ctx.message.text) {
       const text = ctx.message.text
       if (text) {
-        requestAndAnswer(ctx, text)
+        requestAndAnswer(ctx, text, 'medium')
       }
     }
   })
