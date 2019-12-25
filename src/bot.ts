@@ -25,39 +25,21 @@ async function requestAndAnswer(
 
   switch (type) {
     case 'medium':
-      result = (await extend.post(
-        'https://models.dobro.ai/gpt2/medium/',
-        {
-          json: {
-            prompt: text,
-            length: 60,
-            num_samples: 1,
-          },
+      result = (await extend.post('https://models.dobro.ai/gpt2/medium/', {
+        json: {
+          prompt: text,
+          length: 60,
+          num_samples: 1,
         },
-      )) as any
+      })) as any
       break
-      case 'small':
-        result = (await extend.post(
-          'https://models.dobro.ai/gpt2/small/',
-          {
-            json: {
-              prompt: text,
-              length: 60,
-              num_samples: 1,
-            },
-          },
-        )) as any
-        break
     case 'poem':
-      result = (await extend.post(
-        'https://models.dobro.ai/gpt2_poetry/',
-        {
-          json: {
-            prompt: text,
-            length: 100,
-          },
+      result = (await extend.post('https://models.dobro.ai/gpt2_poetry/', {
+        json: {
+          prompt: text,
+          length: 100,
         },
-      )) as any
+      })) as any
       if (
         result.body &&
         result.body.replies &&
@@ -72,23 +54,16 @@ async function requestAndAnswer(
       return
       break
     default:
-      result = (await extend.post(
-        'https://models.dobro.ai/gpt2/medium/',
-        {
-          json: {
-            prompt: text,
-            length: 60,
-            num_samples: 1,
-          },
+      result = (await extend.post('https://models.dobro.ai/gpt2/medium/', {
+        json: {
+          prompt: text,
+          length: 60,
+          num_samples: 1,
         },
-      )) as any
+      })) as any
   }
 
-  if (
-    result.body &&
-    result.body.replies &&
-    result.body.replies.length > 0
-  ) {
+  if (result.body && result.body.replies && result.body.replies.length > 0) {
     const finalResult = `<i>${text}</i>${result.body.replies[0]}`
     ctx.replyWithHTML(finalResult, {
       reply_to_message_id: ctx.message.message_id,
@@ -211,24 +186,6 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
       text = ctx.message.reply_to_message.text
     if (text) {
       requestAndAnswer(ctx, text, 'poem')
-    }
-  })
-
-  bot.command('experimental', async ctx => {
-    let text = ctx.message.text.substr(14)
-    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
-      text = ctx.message.reply_to_message.text
-    if (text) {
-      requestAndAnswer(ctx, text, 'small')
-    }
-  })
-
-  bot.hears(/\/experimental@AiStoriesBot/gm, async ctx => {
-    let text = ctx.message.text.substr(27)
-    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
-      text = ctx.message.reply_to_message.text
-    if (text) {
-      requestAndAnswer(ctx, text, 'small')
     }
   })
 
