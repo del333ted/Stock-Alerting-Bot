@@ -28,20 +28,59 @@ bot.command('help', async (ctx, next) => {
   )
 })
 
-function commandArgument(text) {
-  const regex = /^\/([^@\s]+)@?(?:(\S+)|)\s?([\s\S]+)?$/i
-  const parts = regex.exec(text.trim())
-  return parts[3] || false
-}
+
+bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
+  const extend = got.extend({
+    responseType: 'json',
+    timeout: 10000,
+    throwHttpErrors: false,
+  })
+
+  if (inlineQuery.query) {
+    const text = inlineQuery.query.substr(1)
+    console.log(text)
+    const mediumResult = await extend.post(
+      'https://models.dobro.ai/gpt2/medium/',
+      {
+        json: {
+          prompt: text,
+          length: 60,
+          num_samples: 1,
+        },
+      },
+    )
+
+    if (
+      mediumResult.body &&
+      mediumResult.body.replies &&
+      mediumResult.body.replies.length > 0
+    ) {
+      const result = `<i>${text}</i>  ${mediumResult.body.replies[0]}`
+      return await answerInlineQuery([
+        {
+          type: 'article',
+          id: +new Date(),
+          title: 'Story',
+          description: `${text}${mediumResult.body.replies[0]}`,
+          input_message_content: {
+            message_text: result,
+            parse_mode: 'HTML'
+          },
+        },
+      ])
+    }
+  }
+})
 
 bot.command('story', async ctx => {
   if (
     !ctx.chat ||
     !(ctx.chat.type === 'group' || ctx.chat.type === 'supergroup')
   ) {
-    return ctx.reply('Используйте эту команду в группе.')
+    return ctx.reply('Please, use this command in group chat.')
   }
-  const text = commandArgument(ctx.message.text)
+  const text = ctx.message.text.substr(7)
+
   if (text) {
     const extend = got.extend({
       responseType: 'json',
@@ -51,7 +90,6 @@ bot.command('story', async ctx => {
 
     if (ctx.message.text) {
       ctx.replyWithChatAction('typing')
-      const text = ctx.message.text
 
       const mediumResult = await extend.post(
         'https://models.dobro.ai/gpt2/medium/',
@@ -70,7 +108,6 @@ bot.command('story', async ctx => {
         mediumResult.body.replies.length > 0
       ) {
         const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
-
         ctx.replyWithHTML(result, {
           reply_to_message_id: ctx.message.message_id,
         })
@@ -118,53 +155,6 @@ bot.use(async (ctx, next) => {
   }
 })
 
-bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
-  const extend = got.extend({
-    responseType: 'json',
-    timeout: 10000,
-    throwHttpErrors: false,
-  })
-
-  if (inlineQuery.query) {
-    ctx.replyWithChatAction('typing')
-    const text = inlineQuery.query
-
-    const mediumResult = await extend.post(
-      'https://models.dobro.ai/gpt2/medium/',
-      {
-        json: {
-          prompt: text,
-          length: 60,
-          num_samples: 1,
-        },
-      },
-    )
-
-    if (
-      mediumResult.body &&
-      mediumResult.body.replies &&
-      mediumResult.body.replies.length > 0
-    ) {
-      const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
-
-      return answerInlineQuery([
-        {
-          type: 'article',
-          id: +new Date(),
-          title: 'История',
-          description: 'Кек',
-          thumb_url: 'thumbnail',
-          input_message_content: {
-            message_text: result,
-          },
-          reply_markup: Markup.inlineKeyboard([
-            Markup.urlButton('Go to recipe', href),
-          ]),
-        },
-      ])
-    }
-  }
-})
 
 bot.on('chosen_inline_result', ({ chosenInlineResult }) => {
   console.log('chosen inline result', chosenInlineResult)
