@@ -28,7 +28,6 @@ bot.command('help', async (ctx, next) => {
   )
 })
 
-
 bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
   const extend = got.extend({
     responseType: 'json',
@@ -55,18 +54,21 @@ bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
       mediumResult.body.replies.length > 0
     ) {
       const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
-      return await answerInlineQuery([
-        {
-          type: 'article',
-          id: +new Date(),
-          title: 'Story',
-          description: `${text}${mediumResult.body.replies[0]}`,
-          input_message_content: {
-            message_text: result,
-            parse_mode: 'HTML'
+      return await answerInlineQuery(
+        [
+          {
+            type: 'article',
+            id: +new Date(),
+            title: 'Story',
+            description: `${text}${mediumResult.body.replies[0]}`,
+            input_message_content: {
+              message_text: result,
+              parse_mode: 'HTML',
+            },
           },
-        },
-      ])
+        ],
+        { is_personal: true, cache_time: 0 },
+      )
     }
   }
 })
@@ -153,7 +155,6 @@ bot.use(async (ctx, next) => {
     }
   }
 })
-
 
 bot.on('chosen_inline_result', ({ chosenInlineResult }) => {
   console.log('chosen inline result', chosenInlineResult)
