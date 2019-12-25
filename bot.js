@@ -37,7 +37,7 @@ bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
   })
 
   if (inlineQuery.query) {
-    const text = inlineQuery.query.substr(1)
+    const text = inlineQuery.query
     const mediumResult = await extend.post(
       'https://models.dobro.ai/gpt2/medium/',
       {
