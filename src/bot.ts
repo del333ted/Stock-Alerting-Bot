@@ -173,8 +173,9 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
 
   bot.command('stih', async ctx => {
     let text = ctx.message.text.substr(5)
-    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
+    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text) {
       text = ctx.message.reply_to_message.text
+    }
     if (text) {
       requestAndAnswer(ctx, text, 'poem')
     }
@@ -182,8 +183,9 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
 
   bot.hears(/\/stih@AiStoriesBot/gm, async ctx => {
     let text = ctx.message.text.substr(19)
-    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text)
+    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text) {
       text = ctx.message.reply_to_message.text
+    }
     if (text) {
       requestAndAnswer(ctx, text, 'poem')
     }
