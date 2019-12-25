@@ -42,7 +42,7 @@ async function requestAndAnswer(
         {
           json: {
             prompt: text,
-            length: 150,
+            length: 100,
           },
         },
       )) as any
@@ -51,7 +51,7 @@ async function requestAndAnswer(
         mediumResult.body.replies &&
         mediumResult.body.replies.length > 0
       ) {
-        const result = `<i>${text}</i>\n${mediumResult.body.replies[0]}`
+        const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
         ctx.replyWithHTML(result, {
           reply_to_message_id: ctx.message.message_id,
         })
