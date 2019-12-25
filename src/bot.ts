@@ -97,14 +97,8 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
   )
 
   bot.command('story', async ctx => {
-    if (
-      !ctx.chat ||
-      !(ctx.chat.type === 'group' || ctx.chat.type === 'supergroup')
-    ) {
-      return ctx.reply('Please, use this command in group chat.')
-    }
-    const text = ctx.message.text.substr(7)
-
+    let text = ctx.message.text.substr(7)
+    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text) text = ctx.message.reply_to_message.text
     if (text) {
 
       if (ctx.message.text) {
