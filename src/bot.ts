@@ -1,7 +1,7 @@
 import got from 'got'
 import { Telegraf, ContextMessageUpdate, Markup as m, Extra } from 'telegraf'
 import { attachUser } from './helpers/attachUser'
-import { RequestModel } from './models/Request'
+import { RequestModel, findRequest } from './models/Request'
 import { ChatModel } from './models/Chat'
 import { UserModel } from './models/User'
 
@@ -28,54 +28,60 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
       const Requests = await RequestModel.find().count()
       // Users Count
       const Users = await UserModel.find().count()
-      ctx.reply(`Пользователей: ${Users}\n\nЧатов: ${Chats}\n\nЗапросов: ${Requests}`)
+      ctx.replyWithHTML(
+        `<b>Статистика:</b>\n\nПользователей: ${Users}\n\nЧатов: ${Chats}\n\nЗапросов: ${Requests}`,
+      )
     }
   })
 
-  bot.on('inline_query', async ({ inlineQuery, answerInlineQuery }) => {
-    const extend = got.extend({
-      responseType: 'json',
-      timeout: 10000,
-      throwHttpErrors: false,
-    })
+  bot.on(
+    'inline_query',
+    async ({ message, inlineQuery, answerInlineQuery }) => {
+      const extend = got.extend({
+        responseType: 'json',
+        timeout: 10000,
+        throwHttpErrors: false,
+      })
 
-    if (inlineQuery.query) {
-      const text = inlineQuery.query
-      const mediumResult = (await extend.post(
-        'https://models.dobro.ai/gpt2/medium/',
-        {
-          json: {
-            prompt: text,
-            length: 60,
-            num_samples: 1,
-          },
-        },
-      )) as any
-
-      if (
-        mediumResult.body &&
-        mediumResult.body.replies &&
-        mediumResult.body.replies.length > 0
-      ) {
-        const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
-        return await answerInlineQuery(
-          [
-            {
-              type: 'article',
-              id: new Date().getTime().toString(),
-              title: 'Story',
-              description: `${text}${mediumResult.body.replies[0]}`,
-              input_message_content: {
-                message_text: result,
-                parse_mode: 'HTML',
-              },
+      if (inlineQuery.query) {
+        const text = inlineQuery.query
+        const mediumResult = (await extend.post(
+          'https://models.dobro.ai/gpt2/medium/',
+          {
+            json: {
+              prompt: text,
+              length: 60,
+              num_samples: 1,
             },
-          ],
-          { is_personal: true, cache_time: 0 },
-        )
+          },
+        )) as any
+
+        if (
+          mediumResult.body &&
+          mediumResult.body.replies &&
+          mediumResult.body.replies.length > 0
+        ) {
+          const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
+          await answerInlineQuery(
+            [
+              {
+                type: 'article',
+                id: new Date().getTime().toString(),
+                title: 'Story',
+                description: `${text}${mediumResult.body.replies[0]}`,
+                input_message_content: {
+                  message_text: result,
+                  parse_mode: 'HTML',
+                },
+              },
+            ],
+            { is_personal: true, cache_time: 0 },
+          )
+          return await findRequest(message.message_id)
+        }
       }
-    }
-  })
+    },
+  )
 
   bot.command('story', async ctx => {
     if (
@@ -116,6 +122,7 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
           ctx.replyWithHTML(result, {
             reply_to_message_id: ctx.message.message_id,
           })
+          return await findRequest(ctx.message.message_id)
         }
       }
     }
@@ -156,6 +163,7 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
         ctx.replyWithHTML(result, {
           reply_to_message_id: ctx.message.message_id,
         })
+        return await findRequest(ctx.message.message_id)
       }
     }
   })

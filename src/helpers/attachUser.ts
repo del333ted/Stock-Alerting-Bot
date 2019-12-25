@@ -1,5 +1,5 @@
 // Dependencies
-import { findChat, findUser, findRequest } from '../models'
+import { findChat, findUser } from '../models'
 import { ContextMessageUpdate } from 'telegraf'
 
 export async function attachUser(ctx: ContextMessageUpdate, next) {
@@ -9,9 +9,6 @@ export async function attachUser(ctx: ContextMessageUpdate, next) {
     } else {
       const chat = await findChat(ctx.chat.id)
       ctx.dbchat = chat
-    }
-    if (ctx.message && ctx.message.message_id) {
-      await findRequest(ctx.message.message_id)
     }
   }
   catch {}
