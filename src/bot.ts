@@ -15,6 +15,33 @@ const extend = got.extend({
   }
 })
 
+async function requestAndAnswer(ctx: ContextMessageUpdate, text: String) {
+  ctx.replyWithChatAction('typing')
+
+  const mediumResult = (await extend.post(
+    'https://models.dobro.ai/gpt2/medium/',
+    {
+      json: {
+        prompt: text,
+        length: 60,
+        num_samples: 1,
+      },
+    },
+  )) as any
+
+  if (
+    mediumResult.body &&
+    mediumResult.body.replies &&
+    mediumResult.body.replies.length > 0
+  ) {
+    const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
+    ctx.replyWithHTML(result, {
+      reply_to_message_id: ctx.message.message_id,
+    })
+    return await findRequest(ctx.message.message_id)
+  }
+}
+
 export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
   bot.use(
     rateLimit({
@@ -100,33 +127,15 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
     let text = ctx.message.text.substr(7)
     if (ctx.message.reply_to_message && ctx.message.reply_to_message.text) text = ctx.message.reply_to_message.text
     if (text) {
+      requestAndAnswer(ctx, text)
+    }
+  })
 
-      if (ctx.message.text) {
-        ctx.replyWithChatAction('typing')
-
-        const mediumResult = (await extend.post(
-          'https://models.dobro.ai/gpt2/medium/',
-          {
-            json: {
-              prompt: text,
-              length: 60,
-              num_samples: 1,
-            },
-          },
-        )) as any
-
-        if (
-          mediumResult.body &&
-          mediumResult.body.replies &&
-          mediumResult.body.replies.length > 0
-        ) {
-          const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
-          ctx.replyWithHTML(result, {
-            reply_to_message_id: ctx.message.message_id,
-          })
-          return await findRequest(ctx.message.message_id)
-        }
-      }
+  bot.hears(/\/story@AiStoriesBot/gm, async ctx => {
+    let text = ctx.message.text.substr(20)
+    if (ctx.message.reply_to_message && ctx.message.reply_to_message.text) text = ctx.message.reply_to_message.text
+    if (text) {
+      requestAndAnswer(ctx, text)
     }
   })
 
@@ -134,33 +143,10 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
     if (!ctx.chat || ctx.chat.type !== 'private') {
       return
     }
-
     if (ctx.message.text) {
-      ctx.replyWithChatAction('typing')
       const text = ctx.message.text
-
-      const mediumResult = (await extend.post(
-        'https://models.dobro.ai/gpt2/medium/',
-        {
-          json: {
-            prompt: text,
-            length: 60,
-            num_samples: 1,
-          },
-        },
-      )) as any
-
-      if (
-        mediumResult.body &&
-        mediumResult.body.replies &&
-        mediumResult.body.replies.length > 0
-      ) {
-        const result = `<i>${text}</i>${mediumResult.body.replies[0]}`
-
-        ctx.replyWithHTML(result, {
-          reply_to_message_id: ctx.message.message_id,
-        })
-        return await findRequest(ctx.message.message_id)
+      if (text) {
+        requestAndAnswer(ctx, text)
       }
     }
   })
