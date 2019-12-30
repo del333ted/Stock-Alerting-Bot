@@ -98,7 +98,6 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
   })
 
   bot.command('stats', async ctx => {
-    if (ctx.from.id === Number(process.env.OWNER_ID)) {
       // Chats count
       const Chats = await ChatModel.find().count()
       const ChatsArray = await ChatModel.aggregate(dailyConfig())
@@ -117,7 +116,6 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
       ctx.replyWithHTML(
         `<b>Статистика:</b>\n\nПользователей: ${Users}\n${UsersChart}\n\nЧатов: ${Chats}\n${ChatsChart}\n\nЗапросов: ${Requests}\n${RequestsChart}`,
       )
-    }
   })
 
   bot.on(
