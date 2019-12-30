@@ -66,7 +66,7 @@ export function statisticChart(array: any) {
     const max = Math.max.apply(Math, array.map(function(o) { return o.count; }))
     let text = ''
     let chart = '◆'
-    let whitespace = ' '
+    let whitespace = '  '
     if (!array.length) {
         return 'No data provided'
     }
