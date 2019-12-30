@@ -1,3 +1,6 @@
+import moment = require('moment')
+
+
 export function dailyConfig() {
   return [
     {
@@ -22,7 +25,7 @@ export function dailyConfig() {
       },
     },
     {
-      $group: { _id: '$time', count: { $sum: 1 } },
+      $group: { _id: '$time', count: { $sum: 1 }  },
     },
     { $sort: { _id: -1 } },
   ]
@@ -31,6 +34,9 @@ export function dailyConfig() {
 export function fixAggregation(array: any) {
   const result = []
   let previousId = 0
+  if (!array.length) {
+      return []
+  }
   array.forEach(element => {
     const index = element._id
     if (previousId === index) {
@@ -55,3 +61,27 @@ export function fixAggregation(array: any) {
   }
   return result
 }
+
+export function statisticChart(array: any) {
+    const max = Math.max.apply(Math, array.map(function(o) { return o.count; }))
+    let text = ''
+    let chart = '◆'
+    if (!array.length) {
+        return 'No data provided'
+    }
+    else {
+        array = array.reverse().slice(array.length - 5)
+        array.forEach((v) => {
+            const n = Math.round(v.count / max * 10)
+            const day = daysAgo(v._id)
+            text = `${text}${day}: ${chart.repeat(n)}\n`
+        })
+        return text
+    }
+}
+
+export function daysAgo(numberOfDays: number) {
+    const d = new Date()
+    d.setDate(d.getDate() - numberOfDays)
+    return moment(d).format('DD.MM')
+  }

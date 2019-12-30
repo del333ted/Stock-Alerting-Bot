@@ -5,7 +5,7 @@ import { RequestModel, findRequest } from './models/Request'
 import { ChatModel } from './models/Chat'
 import { UserModel } from './models/User'
 import * as rateLimit from 'telegraf-ratelimit'
-import { dailyConfig, fixAggregation } from './helpers/statistic'
+import { dailyConfig, fixAggregation, statisticChart } from './helpers/statistic'
 
 const extend = got.extend({
   responseType: 'json',
@@ -74,14 +74,14 @@ async function requestAndAnswer(
 }
 
 export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
-  bot.use(
-    rateLimit({
-      window: 8000,
-      limit: 1,
-      onLimitExceeded: (ctx, next) =>
-        ctx.reply('Я не могу так часто отвечать тебе. Пиши, пожалуйста, реже.'),
-    }),
-  )
+  //bot.use(
+    //rateLimit({
+      //window: 8000,
+      //limit: 1,
+      //onLimitExceeded: (ctx, next) =>
+        //ctx.reply('Я не могу так часто отвечать тебе. Пиши, пожалуйста, реже.'),
+   // }),
+ // )
 
   bot.use(attachUser)
 
@@ -102,17 +102,20 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
       // Chats count
       const Chats = await ChatModel.find().count()
       const ChatsArray = await ChatModel.aggregate(dailyConfig())
-      const ChatsDaily = fixAggregation(ChatsArray.sort((a, b) => (a._id > b._id ? 1 : -1)))
+      const ChatsDaily = fixAggregation(ChatsArray.sort((a, b) => (a?._id > b?._id ? 1 : -1)))
+      const ChatsChart = statisticChart(ChatsDaily)
       // Requests count
       const Requests = await RequestModel.find().count()
       const RequestsArray = await RequestModel.aggregate(dailyConfig())
       const RequestsDaily = fixAggregation(RequestsArray.sort((a, b) => (a._id > b._id ? 1 : -1)))
+      const RequestsChart = statisticChart(RequestsDaily)
       // Users Count
       const Users = await UserModel.find().count()
       const UsersArray = await UserModel.aggregate(dailyConfig())
       const UsersDaily = fixAggregation(UsersArray.sort((a, b) => (a._id > b._id ? 1 : -1)))
+      const UsersChart = statisticChart(UsersDaily)
       ctx.replyWithHTML(
-        `<b>Статистика:</b>\n\nПользователей: ${Users}\n\nЧатов: ${Chats}\n\nЗапросов: ${RequestsDaily.toString()}`,
+        `<b>Статистика:</b>\n\nПользователей: ${Users}\n${UsersChart}\n\nЧатов: ${Chats}\n${ChatsChart}\n\nЗапросов: ${Requests}\n${RequestsChart}`,
       )
     }
   })
