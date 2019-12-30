@@ -76,19 +76,31 @@ export function statisticChart(array: any) {
 
         array.forEach((v) => {
             const day = daysAgo(v._id)
-            let check = `${text}${day} (${v.count}):`.length
-            if (check > maxlength) maxlength = check
+            let check = `${day} (${v.count}): `.length
+            if (check > maxlength) {
+                maxlength = check
+            }
         })
-
+        const result = []
         array.forEach((v) => {
             const n = Math.round(v.count / max * 10)
             const day = daysAgo(v._id)
-            text = `${text}${day} (${v.count}): `
+            let subtext = `${day} (${v.count}): `
+
             if (text.length === maxlength) {
-                text = text + `${chart.repeat(n)}\n`
+                subtext = subtext + `${chart.repeat(n)}\n`
             } else {
-                text = text + `${whitespace.repeat(Math.round(maxlength - text.length))}${chart.repeat(n)}\n`
+                subtext = subtext + `${whitespace.repeat(Math.round(maxlength - subtext.length))}${chart.repeat(n)}\n`
             }
+            result.push(subtext)
+        })
+        
+        if (!result.length) {
+            return 'No data provided'
+        }
+
+        result.forEach(v => {
+            text = text + v
         })
         return text
     }
