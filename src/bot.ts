@@ -5,6 +5,7 @@ import { RequestModel, findRequest } from './models/Request'
 import { ChatModel } from './models/Chat'
 import { UserModel } from './models/User'
 import * as rateLimit from 'telegraf-ratelimit'
+import { dailyConfig, fixAggregation } from './helpers/statistic'
 
 const extend = got.extend({
   responseType: 'json',
@@ -100,12 +101,18 @@ export function setupBot(bot: Telegraf<ContextMessageUpdate>) {
     if (ctx.from.id === Number(process.env.OWNER_ID)) {
       // Chats count
       const Chats = await ChatModel.find().count()
+      const ChatsArray = await ChatModel.aggregate(dailyConfig())
+      const ChatsDaily = fixAggregation(ChatsArray.sort((a, b) => (a._id > b._id ? 1 : -1)))
       // Requests count
       const Requests = await RequestModel.find().count()
+      const RequestsArray = await RequestModel.aggregate(dailyConfig())
+      const RequestsDaily = fixAggregation(RequestsArray.sort((a, b) => (a._id > b._id ? 1 : -1)))
       // Users Count
       const Users = await UserModel.find().count()
+      const UsersArray = await UserModel.aggregate(dailyConfig())
+      const UsersDaily = fixAggregation(UsersArray.sort((a, b) => (a._id > b._id ? 1 : -1)))
       ctx.replyWithHTML(
-        `<b>Статистика:</b>\n\nПользователей: ${Users}\n\nЧатов: ${Chats}\n\nЗапросов: ${Requests}`,
+        `<b>Статистика:</b>\n\nПользователей: ${Users}\n\nЧатов: ${Chats}\n\nЗапросов: ${RequestsDaily.toString()}`,
       )
     }
   })
