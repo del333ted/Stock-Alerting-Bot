@@ -1,6 +1,5 @@
 import moment = require('moment')
 
-
 export function dailyConfig() {
   return [
     {
@@ -25,7 +24,7 @@ export function dailyConfig() {
       },
     },
     {
-      $group: { _id: '$time', count: { $sum: 1 }  },
+      $group: { _id: '$time', count: { $sum: 1 } },
     },
     { $sort: { _id: -1 } },
   ]
@@ -35,7 +34,7 @@ export function fixAggregation(array: any) {
   const result = []
   let previousId = 0
   if (!array.length) {
-      return []
+    return []
   }
   array.forEach(element => {
     const index = element._id
@@ -63,51 +62,59 @@ export function fixAggregation(array: any) {
 }
 
 export function statisticChart(array: any) {
-    const max = Math.max.apply(Math, array.map(function(o) { return o.count; }))
-    let text = ''
-    let chart = '◆'
-    let whitespace = '  '
-    if (!array.length) {
-        return 'No data provided'
+  const max = Math.max.apply(
+    Math,
+    array.map(function(o) {
+      return o.count
+    }),
+  )
+  let text = ''
+  let chart = '◆'
+  let whitespace = '  '
+  if (!array.length) {
+    return 'No data provided'
+  } else {
+    array = array.reverse().slice(array.length - 5)
+    let maxlength = 0
+
+    array.forEach(v => {
+      const day = daysAgo(v._id)
+      let check = `${day} (${v.count}): `.length
+      if (check > maxlength) {
+        maxlength = check
+      }
+    })
+    const result = []
+    array.forEach(v => {
+      const n = Math.round((v.count / max) * 10)
+      const day = daysAgo(v._id)
+      let subtext = `${day} (${v.count}): `
+
+      if (text.length === maxlength) {
+        subtext = subtext + `${chart.repeat(n)}\n`
+      } else {
+        subtext =
+          subtext +
+          `${whitespace.repeat(
+            Math.round(maxlength - subtext.length),
+          )}${chart.repeat(n)}\n`
+      }
+      result.push(subtext)
+    })
+
+    if (!result.length) {
+      return 'No data provided'
     }
-    else {
-        array = array.reverse().slice(array.length - 5)
-        let maxlength = 0
 
-        array.forEach((v) => {
-            const day = daysAgo(v._id)
-            let check = `${day} (${v.count}): `.length
-            if (check > maxlength) {
-                maxlength = check
-            }
-        })
-        const result = []
-        array.forEach((v) => {
-            const n = Math.round(v.count / max * 10)
-            const day = daysAgo(v._id)
-            let subtext = `${day} (${v.count}): `
-
-            if (text.length === maxlength) {
-                subtext = subtext + `${chart.repeat(n)}\n`
-            } else {
-                subtext = subtext + `${whitespace.repeat(Math.round(maxlength - subtext.length))}${chart.repeat(n)}\n`
-            }
-            result.push(subtext)
-        })
-        
-        if (!result.length) {
-            return 'No data provided'
-        }
-
-        result.forEach(v => {
-            text = text + v
-        })
-        return text
-    }
+    result.forEach(v => {
+      text = text + v
+    })
+    return text
+  }
 }
 
 export function daysAgo(numberOfDays: number) {
-    const d = new Date()
-    d.setDate(d.getDate() - numberOfDays)
-    return moment(d).format('DD.MM')
-  }
+  const d = new Date()
+  d.setDate(d.getDate() - numberOfDays)
+  return moment(d).format('DD.MM')
+}
