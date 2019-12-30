@@ -74,7 +74,7 @@ export function statisticChart(array: any) {
         array.forEach((v) => {
             const n = Math.round(v.count / max * 10)
             const day = daysAgo(v._id)
-            text = `${text}${day}: ${chart.repeat(n)}\n`
+            text = `${text}${day} (${v.count}): ${chart.repeat(n)}\n`
         })
         return text
     }
