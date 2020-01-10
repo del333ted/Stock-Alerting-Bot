@@ -1,0 +1,22 @@
+name: 'English'
+help: |
+  Hi!
+  Readme coming soon. TL;DR: send me query with your ticker or company name.
+language: Please, select the language.
+language_selected: '@StockAlertingBot now speaks English.'
+ticker:
+  {
+    notFound: 'No tickers found, please repeat request',
+    needSelect: 'Select one of the found tickers or repeat the request:',
+  }
+update: 'Update'
+selectTimezone: 'To set your timezone, select your current time.'
+timezoneDone: 'Done! Your timezone is ${timezone}'
+exchange: 'Exchange'
+changed: 'Changed at'
+updated: 'Updated at'
+exchangeTime: 'Exchange time'
+afterMarketClosed: 'After close:'
+addToFavorite: '➕ Favorite'
+settings: 'Settings'
+favorites: 'Favorites'

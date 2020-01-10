@@ -5,11 +5,11 @@
   "main": "dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "distribute": "yarn build-ts && node dist/app.js",
+    "distribute": "yarn build-ts && node dist/index.js",
     "develop": "concurrently -i -k -p \"[{name}]\" -n \"Node, TypeScript\" -c \"yellow.bold,cyan.bold\" \"yarn watch-js\" \"yarn watch-ts\"",
     "build-ts": "tsc --skipLibCheck",
     "watch-ts": "tsc -w --skipLibCheck",
-    "watch-js": "nodemon dist/app.js"
+    "watch-js": "nodemon dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,14 +23,18 @@
   "homepage": "https://github.com/del333ted/AI-Stories#readme",
   "dependencies": {
     "@typegoose/typegoose": "^6.2.0",
+    "axios": "^0.19.1",
     "concurrently": "^5.0.2",
+    "currency-formatter": "^1.5.5",
     "dotenv": "^8.2.0",
     "got": "^10.2.0",
     "moment": "^2.24.0",
+    "moment-timezone": "^0.5.27",
     "mongoose": "^5.8.3",
     "nodemon": "^2.0.2",
     "resolve": "^1.14.1",
     "telegraf": "^3.34.1",
+    "telegraf-i18n": "^6.6.0",
     "telegraf-ratelimit": "^2.0.0",
     "typescript": "^3.7.4"
   },

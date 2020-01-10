@@ -1,8 +1,10 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {}
+  "settings": {
+    "editor.formatOnSave": true
+  },
+  "folders": [
+    {
+      "path": "."
+    }
+  ]
 }
