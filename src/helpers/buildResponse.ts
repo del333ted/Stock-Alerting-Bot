@@ -1,7 +1,6 @@
 import { tickerData } from './getTickers'
 import { ContextMessageUpdate } from 'telegraf'
 import * as moment from 'moment-timezone'
-import { getTimezone } from './getTickers'
 
 export async function buildResponse(
   info: tickerData,
@@ -17,18 +16,29 @@ ${ctx.i18n.t('exchange')} ${info.exchange}
 ${ctx.i18n.t('exchangeTime')} ${info.currentPriceMarketTime} (${
     info.exchangeTimezone
   })
-${postMarket(info, ctx)}
-${updatedAt(ctx, updateField)}
-        `
+${postMarket(info, ctx)}${preMarket(info, ctx)}
+${updatedAt(ctx, updateField)}`
 }
 
 export function postMarket(info: tickerData, ctx: ContextMessageUpdate) {
   if (info.post) {
     return `
-${ctx.i18n.t('afterMarketClosed')} <b>${info.postPrice} (${
+    ${ctx.i18n.t('afterMarketClosed')} <b>${info.postPrice} (${
       info.postPricePercent
     }%) ${upOrDownEmoji(info.postPricePercentRaw)}</b>
 ${ctx.i18n.t('changed')} ${info.postPriceTime}
+`
+  }
+  return ''
+}
+
+export function preMarket(info: tickerData, ctx: ContextMessageUpdate) {
+  if (info.pre) {
+    return `
+${ctx.i18n.t('preMarket')} <b>${info.prePrice} (${
+      info.prePricePercent
+    }%) ${upOrDownEmoji(info.prePricePercentRaw)}</b>
+${ctx.i18n.t('changed')} ${info.prePriceTime}
 `
   }
   return ''

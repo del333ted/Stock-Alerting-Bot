@@ -78,11 +78,17 @@ export interface tickerData {
   postPricePercent: string
   postPriceTime: string
   postPricePercentRaw: number
+  pre: boolean
+  prePrice: string
+  prePricePercent: string
+  prePriceTime: string
+  prePricePercentRaw: number
 }
 
 export async function formatTickerData(ticker: any, timezone: number) {
   const response: any = {}
   response.post = false
+  response.pre = false
 
   // IF market closed
   if (ticker.postMarketPrice) {
@@ -96,6 +102,21 @@ export async function formatTickerData(ticker: any, timezone: number) {
     )
     response.postPricePercentRaw = ticker.postMarketChangePercent
     response.postPriceTime = moment(new Date(ticker.postMarketTime * 1000))
+      .tz(`Etc/GMT${getTimezone(timezone)}`)
+      .format('LT DD.MM.YYYY')
+  }
+  // IF Pre-market
+  if (ticker.preMarketPrice) {
+    response.pre = true
+    response.prePrice = formatNumberWithSignAndCurr(
+      ticker.preMarketPrice,
+      ticker.currency,
+    )
+    response.prePricePercent = formatNumberWithSignAndCurr(
+      ticker.preMarketChangePercent,
+    )
+    response.prePricePercentRaw = ticker.preMarketChangePercent
+    response.prePriceTime = moment(new Date(ticker.preMarketTime * 1000))
       .tz(`Etc/GMT${getTimezone(timezone)}`)
       .format('LT DD.MM.YYYY')
   }

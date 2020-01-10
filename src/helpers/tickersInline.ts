@@ -62,19 +62,23 @@ export async function handleTickerUpdate(ctx: ContextMessageUpdate) {
 
     await await ctx.answerCbQuery(
       'This message is outdated, please repeat your request.',
+      true,
     )
   }
   return
 }
 
-function buildTickerManagementKeyboard(ctx, symbol: string) {
+export function buildTickerManagementKeyboard(ctx, symbol: string) {
   const result = []
 
-  result.push([
-    m.callbackButton(ctx.i18n.t('update'), `u_${symbol}`),
-    m.callbackButton(ctx.i18n.t('addToFavorite'), `f_${symbol}`),
-  ])
-
+  if ((ctx?.dbuser?.settings?.favorites as string[]).includes(symbol)) {
+    result.push([m.callbackButton(ctx.i18n.t('update'), `u_${symbol}`)])
+  } else {
+    result.push([
+      m.callbackButton(ctx.i18n.t('update'), `u_${symbol}`),
+      m.callbackButton(ctx.i18n.t('addToFavorite'), `f_${symbol}`),
+    ])
+  }
   return m.inlineKeyboard(result)
 }
 
