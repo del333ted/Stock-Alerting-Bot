@@ -1,7 +1,7 @@
 {
-  "name": "ai-stories-bot",
+  "name": "stock-alerting-bot",
   "version": "1.0.0",
-  "description": "AI + STORIES = FUN!",
+  "description": "Рыночек порешает.",
   "main": "dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/del333ted/AI-Stories.git"
+    "url": "git+https://github.com/del333ted/Stock-Alerting-Bot.git"
   },
   "author": "Del333ted",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/del333ted/AI-Stories/issues"
+    "url": "https://github.com/del333ted/Stock-Alerting-Bot/issues"
   },
-  "homepage": "https://github.com/del333ted/AI-Stories#readme",
+  "homepage": "https://github.com/del333ted/Stock-Alerting-Bot/issues#readme",
   "dependencies": {
     "@typegoose/typegoose": "^6.2.0",
     "axios": "^0.19.1",
