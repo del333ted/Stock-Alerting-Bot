@@ -44,25 +44,28 @@ ${ctx.i18n.t('changed')} ${info.prePriceTime}
   return ''
 }
 
+// (x,y) interval
+export const emojiIntervals = {
+  '0:5': '↗️',
+  '5:10': '⬆️',
+  '10:50': '⏫',
+  '50:100000': '⏫‼️',
+  '-5:0': '↘️',
+  '-10:-5': '⬇️',
+  '-50:-10': '⏬',
+  '-100000:-50': '⏬‼️',
+  '0': '⏺',
+}
+
 export function upOrDownEmoji(n: number) {
-  if (n > 50) {
-    return '⏫‼️'
-  } else if (n > 10) {
-    return '⏫'
-  } else if (n > 5) {
-    return '⬆️'
-  } else if (n > 0) {
-    return '↗️'
-  } else if (n === 0) {
-    return '⏺'
-  } else if (n < -50) {
-    return '⏬‼️'
-  } else if (n < -10) {
-    return '⏬'
-  } else if (n < -5) {
-    return '⬇️'
-  } else if (n < 0) {
-    return '↘️'
+  if (n === 0) {
+    return emojiIntervals[n.toString()]
+  }
+  for (const k in emojiIntervals) {
+    let [min, max] = k.split(':')
+    if (n > parseInt(min) && n < parseInt(max)) {
+      return emojiIntervals[k]
+    }
   }
 }
 
