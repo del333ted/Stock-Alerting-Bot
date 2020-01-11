@@ -7,10 +7,7 @@ export async function sendStatistic(ctx: ContextMessageUpdate) {
     const requests = await RequestModel.find({}).count()
     return ctx.replyWithHTML(`<b>Статистика</b>
       
-Пользователей: <b>${users}</b>
-
-
-
+Пользователеaй: <b>${users}</b>
 Запросов: <b>${requests}</b>
         `)
   }
