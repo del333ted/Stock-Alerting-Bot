@@ -36,6 +36,7 @@ export const bot = new Telegraf(process.env.BOT_TOKEN)
 
 // Check if the message needs to be handled
 bot.use(checkTime)
+bot.command('stats', sendStatistic)
 bot.use(collectStatistic)
 bot.on('inline_query', handleInlineQuery)
 bot.action(/^i/, handleInlineUpdate)
@@ -55,7 +56,6 @@ bot.use(checkLanguage)
 bot.command(['start', 'help'], sendHelp)
 bot.command('timezone', sendTimzone)
 bot.command('language', sendLanguage)
-bot.command('stats', sendStatistic)
 bot.hears(match('settings'), sendSettings)
 bot.hears(match('favorites'), sendFavorites)
 
