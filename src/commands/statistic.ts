@@ -8,6 +8,7 @@ export async function sendStatistic(ctx: ContextMessageUpdate) {
     return ctx.replyWithHTML(`<b>Статистика</b>
       
 Пользователей: <b>${users}</b>
+
 Запросов: <b>${requests}</b>
         `)
   }
