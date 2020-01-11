@@ -142,7 +142,7 @@ export async function formatTickerData(ticker: any, timezone: number) {
   response.currentPricePercentRaw = ticker.regularMarketChangePercent
   response.symbol = ticker.symbol
   response.currency = ticker.currency
-  response.company = ticker.longName
+  response.company = ticker.shortName || ticker.longName
   response.marketCap = ticker.marketCap
   return response as tickerData
 }

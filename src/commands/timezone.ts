@@ -1,6 +1,7 @@
 import { ContextMessageUpdate, Markup as m, Extra } from 'telegraf'
 import { formatNumberWithSignAndCurr } from '../helpers/getTickers'
 import * as moment from 'moment-timezone'
+import { sendHelp } from './help'
 
 export async function sendTimzone(ctx: ContextMessageUpdate) {
   return ctx.reply(ctx.i18n.t('selectTimezone'), {
@@ -62,6 +63,6 @@ export async function handleTimezone(ctx: ContextMessageUpdate) {
   if (ctx.dbuser.session.stage === 'languageSelected') {
     ctx.dbuser.session.stage = 'botStarted'
     await ctx.saveSession()
-    return ctx.reply(ctx.i18n.t('help'))
+    return await sendHelp(ctx)
   }
 }

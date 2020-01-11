@@ -1,9 +1,24 @@
 name: 'English'
-help: |
-  Hi!
-  Readme coming soon. TL;DR: send me query with your ticker or company name.
+help: '
+  Hi! I am @StockAlertingBot.
+
+
+ I can show information about the current rate of any tickers on any exchange. 
+
+
+ Send me the name of any public company or, for example, futures (e.g., <i>Tesla, Inc.</i>) or directly ticker symbol (e.g., <i>TSLA</i>) and I will send you up-to-date information.
+ 
+ 
+You can also add tickers to your favorites and enable notifications in the settings - after that I will send you notifications about selected tickers once in the interval specified by you.
+ 
+ 
+ Also I can work with Inline-mode. Write in any chat <code>@StockAlertingBot [query]</code> and you will receive up-to-date information on the cost, which can be updated with the Inline-button.
+ 
+ 
+ My creator: @del333ted'
 language: Please, select the language.
 language_selected: '@StockAlertingBot now speaks English.'
+languageSettings: 'Language:'
 ticker:
   {
     notFound: 'No tickers found, please repeat request',
@@ -11,11 +26,12 @@ ticker:
   }
 update: 'Update'
 selectTimezone: 'To set your timezone, select your current time.'
+timezone: 'Timezone:'
 timezoneDone: 'Done! Your timezone is ${timezone}'
-exchange: 'Exchange'
+exchange: 'Exchange:'
 changed: 'Changed at'
 updated: 'Updated at'
-exchangeTime: 'Exchange time'
+exchangeTime: 'Exchange time:'
 afterMarketClosed: 'After-market:'
 preMarket: 'Pre-market:'
 addToFavorite: '➕ Favorite'
@@ -23,3 +39,32 @@ settings: 'Settings'
 favorites: 'Favorites'
 addedToFavorites: 'Added to favorites.'
 alreadyFavorite: 'Already in favorites.'
+settingsText: '<b>Settings</b>
+
+
+<b>Notifications</b> — enable or disable notifications. If enabled, the bot will send ticker information from your favorites list once in the interval specified in <b>notification period</b>
+
+
+<b>Notification period (required if notifications enabled)</b> — if notifications are enabled, they will be sent once at the interval specified here.
+
+
+<b>Timezone</b> — your timezone.
+
+
+<b>Language</b> — bot language.
+'
+notifications: 'Notifications:'
+notifyPeriod: 'Notification period: ${min} sec'
+periodSettingsText: 'Select how often you want to receive notifications:'
+minutes: '${m}min'
+hours: '${h}h'
+days: '${d}d'
+favoritesLimit: 'Tickers limit (15)'
+favoritesManagementText: '<b>List of favorite tickers.</b>
+
+
+If you have notifications turned on, then you will receive information about these market tickers once in the period you specify.
+
+
+Click on the ticker to remove it from favorites.'
+noFavorites: '<i>You have no favorites tickers. Add them to receive notifications.</i>'

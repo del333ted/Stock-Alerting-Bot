@@ -18,6 +18,9 @@ export class UserSettings {
 
   @prop()
   notifyPeriod?: number
+
+  @prop()
+  lastNotify?: number
 }
 
 export class Session {

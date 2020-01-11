@@ -1,4 +1,8 @@
-import { tickerData } from './getTickers'
+import {
+  tickerData,
+  getTimezone,
+  formatNumberWithSignAndCurr,
+} from './getTickers'
 import { ContextMessageUpdate } from 'telegraf'
 import * as moment from 'moment-timezone'
 
@@ -11,7 +15,9 @@ export async function buildResponse(
     info.currentPricePercent
   }%) ${upOrDownEmoji(info.currentPricePercentRaw)}</b>
     
-${ctx.i18n.t('changed')} ${info.currentPriceTime}
+${ctx.i18n.t('changed')} ${
+    info.currentPriceTime
+  } (GMT ${formatNumberWithSignAndCurr(ctx.dbuser.settings.timezone)})
 ${ctx.i18n.t('exchange')} ${info.exchange}
 ${ctx.i18n.t('exchangeTime')} ${info.currentPriceMarketTime} (${
     info.exchangeTimezone
@@ -23,10 +29,12 @@ ${updatedAt(ctx, updateField)}`
 export function postMarket(info: tickerData, ctx: ContextMessageUpdate) {
   if (info.post) {
     return `
-    ${ctx.i18n.t('afterMarketClosed')} <b>${info.postPrice} (${
+${ctx.i18n.t('afterMarketClosed')} <b>${info.postPrice} (${
       info.postPricePercent
     }%) ${upOrDownEmoji(info.postPricePercentRaw)}</b>
-${ctx.i18n.t('changed')} ${info.postPriceTime}
+${ctx.i18n.t('changed')} ${
+      info.postPriceTime
+    } (GMT ${formatNumberWithSignAndCurr(ctx.dbuser.settings.timezone)})
 `
   }
   return ''
@@ -38,7 +46,9 @@ export function preMarket(info: tickerData, ctx: ContextMessageUpdate) {
 ${ctx.i18n.t('preMarket')} <b>${info.prePrice} (${
       info.prePricePercent
     }%) ${upOrDownEmoji(info.prePricePercentRaw)}</b>
-${ctx.i18n.t('changed')} ${info.prePriceTime}
+${ctx.i18n.t('changed')} ${
+      info.prePriceTime
+    } (GMT ${formatNumberWithSignAndCurr(ctx.dbuser.settings.timezone)})
 `
   }
   return ''
@@ -71,9 +81,11 @@ export function upOrDownEmoji(n: number) {
 
 function updatedAt(ctx: ContextMessageUpdate, y: boolean) {
   if (y) {
-    return `<i>${ctx.i18n.t('updated')} ${moment(new Date()).format(
-      'LT DD.MM.YYYY',
-    )}</i>`
+    return `<i>${ctx.i18n.t('updated')} ${moment(new Date())
+      .tz(`Etc/GMT${getTimezone(ctx.dbuser.settings.timezone)}`)
+      .format('LT DD.MM.YYYY')} (GMT ${formatNumberWithSignAndCurr(
+      ctx.dbuser.settings.timezone,
+    )})</i>`
   }
   return ``
 }

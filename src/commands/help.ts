@@ -1,7 +1,7 @@
 import { ContextMessageUpdate, Markup as m } from 'telegraf'
 
 export function sendHelp(ctx: ContextMessageUpdate) {
-  return ctx.reply(ctx.i18n.t('help'), defaultKeyboard(ctx))
+  return ctx.replyWithHTML(ctx.i18n.t('help'), defaultKeyboard(ctx))
 }
 
 export function defaultKeyboard(ctx: ContextMessageUpdate) {
@@ -9,7 +9,6 @@ export function defaultKeyboard(ctx: ContextMessageUpdate) {
 
   return m
     .keyboard([result])
-    .oneTime()
     .resize()
     .extra()
 }

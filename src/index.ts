@@ -16,11 +16,20 @@ import {
   handleTickerUpdate,
 } from './helpers/tickersInline'
 import { sendTimzone, handleTimezone } from './commands/timezone'
-import { sendFavorites } from './commands/favorites'
+import { sendFavorites, handleTickerDelete } from './commands/favorites'
 import { sendSettings } from './commands/settings'
 import { checkIfPrivate } from './middlewares/checkIfPrivate'
 import { handleFavorites } from './helpers/handleFavorites'
-import { handleInlineQuery } from './helpers/inlineQuery'
+import { handleInlineQuery, handleInlineUpdate } from './helpers/inlineQuery'
+import {
+  handleLanguageSettings,
+  handleTimezoneSettings,
+  handleNotify,
+  handleNotifyPeriod,
+  handlePeriodSet,
+} from './helpers/handleSettings'
+import { setupNotifyWorker } from './helpers/notifyWorker'
+import { sendStatistic } from './commands/statistic'
 const { match } = require('telegraf-i18n')
 
 export const bot = new Telegraf(process.env.BOT_TOKEN)
@@ -29,6 +38,7 @@ export const bot = new Telegraf(process.env.BOT_TOKEN)
 bot.use(checkTime)
 bot.use(collectStatistic)
 bot.on('inline_query', handleInlineQuery)
+bot.action(/^i/, handleInlineUpdate)
 // Attach user with db
 bot.use(attachUser)
 bot.use(checkIfPrivate)
@@ -45,6 +55,7 @@ bot.use(checkLanguage)
 bot.command(['start', 'help'], sendHelp)
 bot.command('timezone', sendTimzone)
 bot.command('language', sendLanguage)
+bot.command('stats', sendStatistic)
 bot.hears(match('settings'), sendSettings)
 bot.hears(match('favorites'), sendFavorites)
 
@@ -52,10 +63,20 @@ bot.on('text', checkStarted, tickersInline)
 bot.action(/^t_/, handleTicker)
 bot.action(/^u_/, handleTickerUpdate)
 bot.action(/^f_/, handleFavorites)
+bot.action(/^d_/, handleTickerDelete)
 bot.action(/^time_/, handleTimezone)
+
+// Settings
+bot.action(/^change_language/, handleLanguageSettings)
+bot.action(/^change_timezone/, handleTimezoneSettings)
+bot.action(/^change_notify/, handleNotify)
+bot.action(/^change_period/, handleNotifyPeriod)
+bot.action(/^period_/, handlePeriodSet)
 
 bot.catch(a => {
   console.log(a)
 })
 
 bot.startPolling()
+
+setupNotifyWorker()
