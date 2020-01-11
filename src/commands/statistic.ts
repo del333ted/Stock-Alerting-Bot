@@ -9,6 +9,8 @@ export async function sendStatistic(ctx: ContextMessageUpdate) {
       
 Пользователей: <b>${users}</b>
 
+
+
 Запросов: <b>${requests}</b>
         `)
   }
