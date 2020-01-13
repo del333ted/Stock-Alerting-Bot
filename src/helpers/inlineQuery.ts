@@ -87,7 +87,6 @@ ${postMarket(info, ctx)}${preMarket(info, ctx)}
 
 function postMarket(info: tickerData, ctx: ContextMessageUpdate) {
   if (info.post) {
-    const lang = ctx.dbuser.telegramLanguage
     return `${ctx.i18n.t('afterMarketClosed')} <b>${info.postPrice} (${
       info.postPricePercent
     }%) ${upOrDownEmoji(info.postPricePercentRaw)}</b>`
@@ -97,7 +96,6 @@ function postMarket(info: tickerData, ctx: ContextMessageUpdate) {
 
 function preMarket(info: tickerData, ctx: ContextMessageUpdate) {
   if (info.pre) {
-    const lang = ctx.dbuser.telegramLanguage
     return `${ctx.i18n.t('preMarket')} <b>${info.prePrice} (${
       info.prePricePercent
     }%) ${upOrDownEmoji(info.prePricePercentRaw)}</b>`
