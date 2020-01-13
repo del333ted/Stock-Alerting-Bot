@@ -4,9 +4,11 @@ import {
   formatTickerData,
   tickerData,
   formatNumberWithSignAndCurr,
+  getTimezone,
 } from './getTickers'
 import { upOrDownEmoji } from './buildResponse'
 import { bot } from '../index'
+import * as moment from 'moment-timezone'
 
 export async function setupNotifyWorker() {
   NotifyWorker()
@@ -42,7 +44,11 @@ export async function NotifyWorker() {
 }
 
 async function sendNotify(symbols: string[], user: User) {
-  let notifyText = `<b>${l('report', user.telegramLanguage)}</b>`
+  let notifyText = `<b>${l('report', user.telegramLanguage)}</b> ${moment(
+    new Date(),
+  )
+    .tz(`Etc/GMT${getTimezone(user.settings.timezone)}`)
+    .format('LT DD.MM')}`
   const response = await getStockInfoByTickers(symbols)
   for (const ticker of response) {
     const info = await formatTickerData(ticker, user.settings.timezone)
@@ -56,27 +62,17 @@ async function buildNotifyResponse(info: tickerData, user: User) {
   return `${info.symbol} <b>${info.currentPrice} (${
     info.currentPricePercent
   }%) ${upOrDownEmoji(info.currentPricePercentRaw)}</b>
-        
-${l('changed', lang)} ${
-    info.currentPriceTime
-  } (GMT ${formatNumberWithSignAndCurr(user.settings.timezone)})
+${postMarket(info, user)}${preMarket(info, user)}
 ${l('exchange', lang)} ${info.exchange}
-${l('exchangeTime', lang)} ${info.currentPriceMarketTime} (${
-    info.exchangeTimezone
-  })
-${postMarket(info, user)}${preMarket(info, user)}`
+`
 }
 
 function postMarket(info: tickerData, user: User) {
   if (info.post) {
     const lang = user.telegramLanguage
-    return `
-${l('afterMarketClosed', lang)} <b>${info.postPrice} (${
+    return `${l('afterMarketClosed', lang)} <b>${info.postPrice} (${
       info.postPricePercent
     }%) ${upOrDownEmoji(info.postPricePercentRaw)}</b>
-${l('changed', lang)} ${info.postPriceTime} (GMT ${formatNumberWithSignAndCurr(
-      user.settings.timezone,
-    )})
   `
   }
   return ''
@@ -85,13 +81,9 @@ ${l('changed', lang)} ${info.postPriceTime} (GMT ${formatNumberWithSignAndCurr(
 function preMarket(info: tickerData, user: User) {
   if (info.pre) {
     const lang = user.telegramLanguage
-    return `
-${l('preMarket', lang)} <b>${info.prePrice} (${
+    return `${l('preMarket', lang)} <b>${info.prePrice} (${
       info.prePricePercent
     }%) ${upOrDownEmoji(info.prePricePercentRaw)}</b>
-${l('changed', lang)} ${info.prePriceTime} (GMT ${formatNumberWithSignAndCurr(
-      user.settings.timezone,
-    )})
   `
   }
   return ''
