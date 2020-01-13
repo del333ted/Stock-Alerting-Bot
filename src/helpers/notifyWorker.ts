@@ -63,7 +63,7 @@ async function buildNotifyResponse(info: tickerData, user: User) {
     info.currentPricePercent
   }%) ${upOrDownEmoji(info.currentPricePercentRaw)}</b>
 ${postMarket(info, user)}${preMarket(info, user)}
-${l('exchange', lang)} ${info.exchange}`
+`
 }
 
 function postMarket(info: tickerData, user: User) {

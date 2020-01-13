@@ -10,7 +10,8 @@ import * as moment from 'moment-timezone'
 import { User } from '../models'
 
 export async function handleInlineQuery(ctx: ContextMessageUpdate) {
-  const { message, inlineQuery, dbuser, answerInlineQuery } = ctx
+  const { inlineQuery, answerInlineQuery } = ctx
+
   if (inlineQuery.query) {
     const query = inlineQuery.query
     const result = []
@@ -87,7 +88,7 @@ ${postMarket(info, ctx)}${preMarket(info, ctx)}
 
 function postMarket(info: tickerData, ctx: ContextMessageUpdate) {
   if (info.post) {
-    return `${ctx.i18n.t('afterMarketClosed')} <b>${info.postPrice} (${
+    return `Post-market: <b>${info.postPrice} (${
       info.postPricePercent
     }%) ${upOrDownEmoji(info.postPricePercentRaw)}</b>`
   }
@@ -96,7 +97,7 @@ function postMarket(info: tickerData, ctx: ContextMessageUpdate) {
 
 function preMarket(info: tickerData, ctx: ContextMessageUpdate) {
   if (info.pre) {
-    return `${ctx.i18n.t('preMarket')} <b>${info.prePrice} (${
+    return `Pre-market: <b>${info.prePrice} (${
       info.prePricePercent
     }%) ${upOrDownEmoji(info.prePricePercentRaw)}</b>`
   }
