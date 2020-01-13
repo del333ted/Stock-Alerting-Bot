@@ -44,11 +44,11 @@ export async function NotifyWorker() {
 }
 
 async function sendNotify(symbols: string[], user: User) {
-  let notifyText = `<b>${l('report', user.telegramLanguage)}</b> ${moment(
+  let notifyText = `<b>${l('report', user.telegramLanguage)}</b> <i>${moment(
     new Date(),
   )
     .tz(`Etc/GMT${getTimezone(user.settings.timezone)}`)
-    .format('LT DD.MM')}`
+    .format('LT DD.MM')}</i>`
   const response = await getStockInfoByTickers(symbols)
   for (const ticker of response) {
     const info = await formatTickerData(ticker, user.settings.timezone)
@@ -63,8 +63,7 @@ async function buildNotifyResponse(info: tickerData, user: User) {
     info.currentPricePercent
   }%) ${upOrDownEmoji(info.currentPricePercentRaw)}</b>
 ${postMarket(info, user)}${preMarket(info, user)}
-${l('exchange', lang)} ${info.exchange}
-`
+${l('exchange', lang)} ${info.exchange}`
 }
 
 function postMarket(info: tickerData, user: User) {
@@ -72,8 +71,7 @@ function postMarket(info: tickerData, user: User) {
     const lang = user.telegramLanguage
     return `${l('afterMarketClosed', lang)} <b>${info.postPrice} (${
       info.postPricePercent
-    }%) ${upOrDownEmoji(info.postPricePercentRaw)}</b>
-  `
+    }%) ${upOrDownEmoji(info.postPricePercentRaw)}</b>`
   }
   return ''
 }
@@ -83,8 +81,7 @@ function preMarket(info: tickerData, user: User) {
     const lang = user.telegramLanguage
     return `${l('preMarket', lang)} <b>${info.prePrice} (${
       info.prePricePercent
-    }%) ${upOrDownEmoji(info.prePricePercentRaw)}</b>
-  `
+    }%) ${upOrDownEmoji(info.prePricePercentRaw)}</b>`
   }
   return ''
 }

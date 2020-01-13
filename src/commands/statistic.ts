@@ -19,7 +19,7 @@ export async function sendStatistic(ctx: ContextMessageUpdate) {
 
 Пользователей с уведомлениями: <b>${usersNotify}</b>
 
-Пользователей с выключенной рассылкой: <b>${usersDisabledSendout}</b>
+Пользователей с выключенной рассылкой: ${usersDisabledSendout}</b>
 
 Запросов: <b>${requests}</b>
         `)

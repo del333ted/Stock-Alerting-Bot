@@ -7,12 +7,10 @@ import {
 } from './getTickers'
 import { upOrDownEmoji } from './buildResponse'
 import * as moment from 'moment-timezone'
+import { User } from '../models'
 
-export async function handleInlineQuery({
-  message,
-  inlineQuery,
-  answerInlineQuery,
-}: ContextMessageUpdate) {
+export async function handleInlineQuery(ctx: ContextMessageUpdate) {
+  const { message, inlineQuery, dbuser, answerInlineQuery } = ctx
   if (inlineQuery.query) {
     const query = inlineQuery.query
     const result = []
@@ -31,7 +29,8 @@ export async function handleInlineQuery({
         info.currentPrice
       } (${info.currentPricePercent}%) ${upOrDownEmoji(
         info.currentPricePercentRaw,
-      )}</b>`
+      )}</b>
+${postMarket(info, ctx)}${preMarket(info, ctx)}`
 
       result.push({
         type: 'article',
@@ -71,6 +70,7 @@ export async function handleInlineUpdate(ctx: ContextMessageUpdate) {
   } (${info.currentPricePercent}%) ${upOrDownEmoji(
     info.currentPricePercentRaw,
   )}</b>
+${postMarket(info, ctx)}${preMarket(info, ctx)}
 
 <i>Updated at ${moment(new Date())
     .tz('Etc/GMT0')
@@ -83,4 +83,24 @@ export async function handleInlineUpdate(ctx: ContextMessageUpdate) {
       parse_mode: 'HTML',
     })
   } catch {}
+}
+
+function postMarket(info: tickerData, ctx: ContextMessageUpdate) {
+  if (info.post) {
+    const lang = ctx.dbuser.telegramLanguage
+    return `${ctx.i18n.t('afterMarketClosed')} <b>${info.postPrice} (${
+      info.postPricePercent
+    }%) ${upOrDownEmoji(info.postPricePercentRaw)}</b>`
+  }
+  return ''
+}
+
+function preMarket(info: tickerData, ctx: ContextMessageUpdate) {
+  if (info.pre) {
+    const lang = ctx.dbuser.telegramLanguage
+    return `${ctx.i18n.t('preMarket')} <b>${info.prePrice} (${
+      info.prePricePercent
+    }%) ${upOrDownEmoji(info.prePricePercentRaw)}</b>`
+  }
+  return ''
 }
