@@ -9,12 +9,16 @@ help: '
  Send me the name of any public company or, for example, futures (e.g., <i>Tesla, Inc.</i>) or directly ticker symbol (e.g., <i>TSLA</i>) and I will send you up-to-date information.
  
  
-You can also add tickers to your favorites and enable notifications in the settings - after that I will send you notifications about selected tickers once in the interval specified by you.
+ You can also add tickers to your favorites and enable notifications in the settings - after that I will send you notifications about selected tickers once in the interval specified by you.
  
  
  Also I can work with Inline-mode. Write in any chat <code>@StockAlertingBot [query]</code> and you will receive up-to-date information on the cost, which can be updated with the Inline-button.
  
  
+ <b>Pre-market</b> — trade before the opening of the market.
+ <b>Post-market</b> — trading after hours.
+
+
  My creator: @del333ted'
 language: Please, select the language.
 language_selected: '@StockAlertingBot now speaks English.'
