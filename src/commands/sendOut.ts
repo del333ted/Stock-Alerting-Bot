@@ -10,7 +10,7 @@ async function sendOut(text: string) {
     let n = 1
     let usersCount = 0
     for (const user of users) {
-      if (!user.sendoutDisabled) {
+      if (!user?.settings?.sendoutDisabled) {
         try {
           await bot.telegram.sendMessage(user.id, text, {
             parse_mode: 'HTML',
