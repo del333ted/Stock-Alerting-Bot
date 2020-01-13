@@ -12,7 +12,7 @@ async function sendOut(text: string) {
     for (const user of users) {
       if (!user?.settings?.sendoutDisabled) {
         try {
-          await bot.telegram.sendMessage(user.id, text, {
+          await bot.telegram.sendMessage(user.telegramId, text, {
             parse_mode: 'HTML',
           })
           usersCount = usersCount + 1
