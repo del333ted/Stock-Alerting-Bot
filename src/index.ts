@@ -30,6 +30,7 @@ import {
 } from './helpers/handleSettings'
 import { setupNotifyWorker } from './helpers/notifyWorker'
 import { sendStatistic } from './commands/statistic'
+import { sendoutCommand, subCommand, unsubCommand } from './commands/sendOut'
 const { match } = require('telegraf-i18n')
 
 export const bot = new Telegraf(process.env.BOT_TOKEN)
@@ -56,10 +57,16 @@ bot.use(checkLanguage)
 bot.command(['start', 'help'], sendHelp)
 bot.command('timezone', sendTimzone)
 bot.command('language', sendLanguage)
+
+bot.command('sub', subCommand)
+bot.command('unsub', unsubCommand)
+bot.command('sendout', sendoutCommand)
+
 bot.hears(match('settings'), sendSettings)
 bot.hears(match('favorites'), sendFavorites)
 
 bot.on('text', checkStarted, tickersInline)
+
 bot.action(/^t_/, handleTicker)
 bot.action(/^u_/, handleTickerUpdate)
 bot.action(/^f_/, handleFavorites)

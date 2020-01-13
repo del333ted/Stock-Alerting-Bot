@@ -68,3 +68,5 @@ If you have notifications turned on, then you will receive information about the
 
 Click on the ticker to remove it from favorites.'
 noFavorites: '<i>You have no favorites tickers. Add them to receive notifications.</i>'
+sub: 'You have subscribed to the announcements.'
+unsub: 'Now you will not receive announcements. Subscribe /sub'

@@ -5,6 +5,12 @@
   "folders": [
     {
       "path": "."
+    },
+    {
+      "path": "/home/usr/projects/tg-sendout"
+    },
+    {
+      "path": "/home/usr/projects/AI-Stories"
     }
   ]
 }

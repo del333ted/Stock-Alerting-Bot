@@ -21,6 +21,9 @@ export class UserSettings {
 
   @prop()
   lastNotify?: number
+
+  @prop({ default: false, required: true })
+  sendoutDisabled: boolean
 }
 
 export class Session {
