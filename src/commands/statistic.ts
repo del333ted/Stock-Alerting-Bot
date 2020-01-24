@@ -13,7 +13,7 @@ export async function sendStatistic(ctx: ContextMessageUpdate) {
     }).count()
 
     const requests = await RequestModel.find({}).count()
-    return ctx.replyWithHTML(`<b>Статистика</b> 
+    return ctx.replyWithHTML(`<b>Статистика</b>  
       
 Пользователей: <b>${users}</b>
 
