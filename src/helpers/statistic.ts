@@ -69,6 +69,7 @@ export function statisticChart(array: any) {
     }),
   )
   let text = ''
+
   let chart = '◆'
   let whitespace = '  '
   if (!array.length) {
