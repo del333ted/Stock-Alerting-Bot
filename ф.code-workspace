@@ -1,16 +1,29 @@
 {
   "settings": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "prettier.configPath": "/home/usr/projects/.prettierrc"
   },
   "folders": [
-    {
-      "path": "."
-    },
     {
       "path": "/home/usr/projects/tg-sendout"
     },
     {
       "path": "/home/usr/projects/AI-Stories"
+    },
+    {
+      "path": "/home/usr/Novel-Corona-Virus-Bot"
+    },
+    {
+      "path": "."
+    },
+    {
+      "path": "/home/usr/projects/memcoin"
+    },
+    {
+      "path": "/home/usr/projects/vacancy"
+    },
+    {
+      "path": "/home/usr/projects/test"
     }
   ]
 }

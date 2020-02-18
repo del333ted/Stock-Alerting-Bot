@@ -5,7 +5,7 @@ import {
   tickerData,
   formatTickerData,
 } from './getTickers'
-import { upOrDownEmoji } from './buildResponse'
+import { upOrDownEmoji, indexesInfo } from './buildResponse'
 import * as moment from 'moment-timezone'
 import { User } from '../models'
 
@@ -31,6 +31,7 @@ export async function handleInlineQuery(ctx: ContextMessageUpdate) {
       } (${info.currentPricePercent}%) ${upOrDownEmoji(
         info.currentPricePercentRaw,
       )}</b>
+${await indexesInfo(info, ctx)}
 ${postMarket(info, ctx)}${preMarket(info, ctx)}`
 
       result.push({
@@ -71,6 +72,7 @@ export async function handleInlineUpdate(ctx: ContextMessageUpdate) {
   } (${info.currentPricePercent}%) ${upOrDownEmoji(
     info.currentPricePercentRaw,
   )}</b>
+${await indexesInfo(info, ctx)}
 ${postMarket(info, ctx)}${preMarket(info, ctx)}
 
 <i>Updated at ${moment(new Date())

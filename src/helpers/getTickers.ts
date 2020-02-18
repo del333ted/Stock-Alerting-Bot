@@ -16,10 +16,22 @@ const axiosSearchInstance = axios.create({
   headers: { UserAgent: 'Telegram bot' },
 })
 
+const axiosChartInstance = axios.create({
+  baseURL: 'https://query1.finance.yahoo.com/v8/finance/chart/',
+  timeout: 1000,
+  headers: { UserAgent: 'Telegram bot' },
+})
+
 const requestTickersParams = {
   formatted: false,
   region: 'US',
   lang: 'en-US',
+}
+
+const requestChartParams = {
+  region: 'US',
+  lang: 'en-US',
+  includePrePost: false,
 }
 
 const requestSearchParams = {
@@ -41,6 +53,22 @@ export async function findTickers(query: string) {
     }
     return false
   } catch (err) {
+    return false
+  }
+}
+
+export async function getStockChart(ticker: string) {
+  try {
+    const response = await axiosChartInstance.get(`/${ticker}`, {
+      params: {
+        ...requestChartParams,
+        interval: '5m',
+        range: '5d',
+      },
+    })
+
+    return response?.data?.chart?.result[0] ?? false
+  } catch {
     return false
   }
 }

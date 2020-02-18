@@ -36,6 +36,7 @@
     "telegraf": "^3.34.1",
     "telegraf-i18n": "^6.6.0",
     "telegraf-ratelimit": "^2.0.0",
+    "tulind": "^0.8.18",
     "typescript": "^3.7.4"
   },
   "devDependencies": {

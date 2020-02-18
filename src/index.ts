@@ -31,10 +31,10 @@ import {
 import { setupNotifyWorker } from './helpers/notifyWorker'
 import { sendStatistic } from './commands/statistic'
 import { sendoutCommand, subCommand, unsubCommand } from './commands/sendOut'
+import { calculateIndexes } from './helpers/calculateIndexes'
 const { match } = require('telegraf-i18n')
 
 export const bot = new Telegraf(process.env.BOT_TOKEN)
-
 // Check if the message needs to be handled
 bot.use(checkTime)
 bot.command('stats', sendStatistic)

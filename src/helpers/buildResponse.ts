@@ -5,6 +5,7 @@ import {
 } from './getTickers'
 import { ContextMessageUpdate } from 'telegraf'
 import * as moment from 'moment-timezone'
+import { calculateIndexes } from './calculateIndexes'
 
 export async function buildResponse(
   info: tickerData,
@@ -14,7 +15,7 @@ export async function buildResponse(
   return `${info.symbol} <b>${info.currentPrice} (${
     info.currentPricePercent
   }%) ${upOrDownEmoji(info.currentPricePercentRaw)}</b>
-    
+${await indexesInfo(info, ctx)}
 ${ctx.i18n.t('changed')} ${
     info.currentPriceTime
   } (GMT ${formatNumberWithSignAndCurr(ctx.dbuser.settings.timezone)})
@@ -38,6 +39,18 @@ ${ctx.i18n.t('changed')} ${
 `
   }
   return ''
+}
+
+export async function indexesInfo(info: tickerData, ctx: ContextMessageUpdate) {
+  const indexesCalculated = await calculateIndexes(info.symbol)
+  if (!indexesCalculated || !indexesCalculated.psar) {
+    return ''
+  }
+  return `<b>PSAR (0.02, 0.2):</b> ${formatNumberWithSignAndCurr(
+    indexesCalculated.psar[indexesCalculated.psar.length - 1],
+    info.currency,
+  )}
+  `
 }
 
 export function preMarket(info: tickerData, ctx: ContextMessageUpdate) {

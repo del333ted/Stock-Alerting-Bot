@@ -9,6 +9,7 @@ import {
 import { upOrDownEmoji } from './buildResponse'
 import { bot } from '../index'
 import * as moment from 'moment-timezone'
+import { calculateIndexes } from './calculateIndexes'
 
 export async function setupNotifyWorker() {
   NotifyWorker()
@@ -62,6 +63,7 @@ async function buildNotifyResponse(info: tickerData, user: User) {
   return `${info.symbol} <b>${info.currentPrice} (${
     info.currentPricePercent
   }%) ${upOrDownEmoji(info.currentPricePercentRaw)}</b>
+${await indexesInfo(info)}  
 ${postMarket(info, user)}${preMarket(info, user)}
 `
 }
@@ -84,6 +86,17 @@ function preMarket(info: tickerData, user: User) {
     }%) ${upOrDownEmoji(info.prePricePercentRaw)}</b>`
   }
   return ''
+}
+
+export async function indexesInfo(info: tickerData) {
+  const indexesCalculated = await calculateIndexes(info.symbol)
+  if (!indexesCalculated || !indexesCalculated.psar) {
+    return ''
+  }
+  return `<b>PSAR (0.02, 0.2):</b> ${formatNumberWithSignAndCurr(
+    indexesCalculated.psar[indexesCalculated.psar.length - 1],
+    info.currency,
+  )}`
 }
 
 const phrases = {
