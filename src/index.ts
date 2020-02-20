@@ -70,7 +70,7 @@ bot.on('text', checkStarted, tickersInline)
 
 bot.action(/^t_/, handleTicker)
 bot.action(/^u_/, handleTickerUpdate)
-bot.action(/^ch/, handleTickerChart)
+bot.action(/^cg/, handleTickerChart)
 bot.action(/^f_/, handleFavorites)
 bot.action(/^d_/, handleTickerDelete)
 bot.action(/^time_/, handleTimezone)

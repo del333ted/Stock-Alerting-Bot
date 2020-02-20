@@ -112,7 +112,7 @@ export function buildTickerManagementKeyboard(ctx, symbol: string) {
   if ((ctx?.dbuser?.settings?.favorites as string[]).includes(symbol)) {
     result.push(
       [m.callbackButton(ctx.i18n.t('update'), `u_${symbol}`)],
-      [m.callbackButton(ctx.i18n.t('chart'), `ch${symbol}`)],
+      [m.callbackButton(ctx.i18n.t('chart'), `cg${symbol}`)],
     )
   } else {
     result.push(
