@@ -7,6 +7,7 @@ export async function sendStatistic(ctx: ContextMessageUpdate) {
     const usersNotify = await UserModel.find({
       'settings.notify': true,
       'settings.notifyPeriod': { $exists: true },
+      'settings.sendoutDisabled': false,
     }).count()
 
     const usersDisabledSendout = await UserModel.find({
