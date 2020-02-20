@@ -35,7 +35,7 @@ export async function handleLanguage(ctx: ContextMessageUpdate) {
     ctx.i18n.t('language_selected'),
     { parse_mode: 'HTML' },
   )
-  await ctx.reply('done', defaultKeyboard(ctx))
+  await ctx.reply('ok', defaultKeyboard(ctx))
   if (ctx.dbuser.session?.stage === 'languageSelected') {
     return sendTimzone(ctx)
   }
