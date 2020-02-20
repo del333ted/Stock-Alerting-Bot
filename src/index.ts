@@ -14,6 +14,7 @@ import {
   tickersInline,
   handleTicker,
   handleTickerUpdate,
+  handleTickerChart,
 } from './helpers/tickersInline'
 import { sendTimzone, handleTimezone } from './commands/timezone'
 import { sendFavorites, handleTickerDelete } from './commands/favorites'
@@ -69,6 +70,7 @@ bot.on('text', checkStarted, tickersInline)
 
 bot.action(/^t_/, handleTicker)
 bot.action(/^u_/, handleTickerUpdate)
+bot.action(/^ch/, handleTickerChart)
 bot.action(/^f_/, handleFavorites)
 bot.action(/^d_/, handleTickerDelete)
 bot.action(/^time_/, handleTimezone)

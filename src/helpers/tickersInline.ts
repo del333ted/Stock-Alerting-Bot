@@ -4,8 +4,10 @@ import {
   getStockInfoByTickers,
   formatTickerData,
   tickerData,
+  sendChartImage,
 } from './getTickers'
 import { buildResponse } from './buildResponse'
+import { calculateIndexes } from './calculateIndexes'
 
 export async function tickersInline(ctx: ContextMessageUpdate, next) {
   const keyboard = await buildTickersKeyboard(ctx.message.text)
@@ -34,6 +36,42 @@ export async function handleTicker(ctx: ContextMessageUpdate) {
     parse_mode: 'HTML',
     reply_markup: buildTickerManagementKeyboard(ctx, info.symbol),
   })
+  return
+}
+
+export async function handleTickerChart(ctx: ContextMessageUpdate) {
+  const ticker = ctx.callbackQuery.data.substr(2)
+
+  const indexesCalculated = await calculateIndexes(ticker)
+
+  if (!indexesCalculated || !indexesCalculated.psar) {
+    return ''
+  }
+
+  try {
+    await ctx.telegram.sendChatAction(ctx.from.id, 'upload_photo')
+    const sendedChart = await sendChartImage(
+      {
+        X: indexesCalculated.timestamp,
+        Psary: indexesCalculated.psar,
+        Y: indexesCalculated.closeArray,
+        Language: ctx.dbuser.telegramLanguage,
+        Ticker: ticker,
+      },
+      ctx.from.id,
+    )
+    await ctx.answerCbQuery()
+  } catch (err) {
+    console.log(err)
+    if (err.description === 'Bad Request: now I cannot send you chart :(') {
+      return await ctx.answerCbQuery()
+    }
+
+    await await ctx.answerCbQuery(
+      'This message is outdated, please repeat your request.',
+      true,
+    )
+  }
   return
 }
 
@@ -72,12 +110,18 @@ export function buildTickerManagementKeyboard(ctx, symbol: string) {
   const result = []
 
   if ((ctx?.dbuser?.settings?.favorites as string[]).includes(symbol)) {
-    result.push([m.callbackButton(ctx.i18n.t('update'), `u_${symbol}`)])
+    result.push(
+      [m.callbackButton(ctx.i18n.t('update'), `u_${symbol}`)],
+      [m.callbackButton(ctx.i18n.t('chart'), `ch${symbol}`)],
+    )
   } else {
-    result.push([
-      m.callbackButton(ctx.i18n.t('update'), `u_${symbol}`),
-      m.callbackButton(ctx.i18n.t('addToFavorite'), `f_${symbol}`),
-    ])
+    result.push(
+      [
+        m.callbackButton(ctx.i18n.t('update'), `u_${symbol}`),
+        m.callbackButton(ctx.i18n.t('addToFavorite'), `f_${symbol}`),
+      ],
+      [m.callbackButton(ctx.i18n.t('chart'), `ch${symbol}`)],
+    )
   }
   return m.inlineKeyboard(result)
 }

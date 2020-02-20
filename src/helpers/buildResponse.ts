@@ -2,10 +2,12 @@ import {
   tickerData,
   getTimezone,
   formatNumberWithSignAndCurr,
+  sendChartImage,
 } from './getTickers'
 import { ContextMessageUpdate } from 'telegraf'
 import * as moment from 'moment-timezone'
 import { calculateIndexes } from './calculateIndexes'
+import axios from 'axios'
 
 export async function buildResponse(
   info: tickerData,
@@ -46,6 +48,7 @@ export async function indexesInfo(info: tickerData, ctx: ContextMessageUpdate) {
   if (!indexesCalculated || !indexesCalculated.psar) {
     return ''
   }
+
   return `<b>PSAR (0.02, 0.2):</b> ${formatNumberWithSignAndCurr(
     indexesCalculated.psar[indexesCalculated.psar.length - 1],
     info.currency,

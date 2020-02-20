@@ -2,21 +2,17 @@ import { getStockChart } from './getTickers'
 import * as tulind from 'tulind'
 
 export const calculateIndexes = async (ticker: string) => {
-  const chartData = await getStockChart(ticker)
+  let chartData = await getStockChart(ticker)
 
   let graphData = chartData?.indicators?.quote ?? false
 
-  if (!graphData?.length) {
+  if (!graphData?.length || !chartData?.timestamp?.length) {
     return false
   }
 
-  graphData = await formatPureData(graphData[0], [
-    'close',
-    'open',
-    'high',
-    'volume',
-    'low',
-  ])
+  chartData = await formatPureData(chartData, ['timestamp'])
+
+  graphData = await formatPureData(graphData[0], ['close', 'high', 'low'])
 
   const [psar] = (await indexCalculator(
     'psar',
@@ -24,9 +20,15 @@ export const calculateIndexes = async (ticker: string) => {
     [0.02, 0.2],
   )) as number[][]
 
+  if (psar.length < graphData.close.length) {
+    psar.unshift(psar[0])
+  }
+
   return {
     psar: psar,
     close: graphData.close[graphData.close.length - 1],
+    closeArray: graphData.close,
+    timestamp: chartData.timestamp,
   }
 }
 
@@ -45,8 +47,18 @@ export const indexCalculator = async (
 
 export const formatPureData = async (data: any, properties: string[]) => {
   for (const property of properties) {
-    data[property] = data[property].filter(v => {
-      return v && v > 0
+    const sum = data[property].reduce((a, b) => a + b, 0)
+    const avg = sum / data[property].length || 0
+
+    data[property] = data[property].map((v, i) => {
+      if (!v || v < 1) {
+        if (data[property][i - 1]) {
+          v = data[property][i - 1]
+        } else {
+          v = avg
+        }
+      }
+      return v
     })
   }
 

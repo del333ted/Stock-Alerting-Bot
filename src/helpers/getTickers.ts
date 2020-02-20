@@ -10,6 +10,12 @@ const axiosInstance = axios.create({
   headers: { UserAgent: 'Telegram bot' },
 })
 
+const axiosGoChartAPI = axios.create({
+  baseURL: 'http://localhost:3001/StockAlertingBot/',
+  timeout: 1000,
+  headers: { UserAgent: 'Telegram bot Stock Alerting Bot' },
+})
+
 const axiosSearchInstance = axios.create({
   baseURL: 'https://query1.finance.yahoo.com/v1/finance/',
   timeout: 1000,
@@ -31,7 +37,7 @@ const requestTickersParams = {
 const requestChartParams = {
   region: 'US',
   lang: 'en-US',
-  includePrePost: false,
+  includePrePost: true,
 }
 
 const requestSearchParams = {
@@ -59,16 +65,34 @@ export async function findTickers(query: string) {
 
 export async function getStockChart(ticker: string) {
   try {
-    const response = await axiosChartInstance.get(`/${ticker}`, {
+    const dateNow = new Date().getTime() / 1000
+    const dateOld = (new Date().getTime() - 1000 * 86400 * 10) / 1000
+
+    const response = await axiosChartInstance.get(`/${ticker}?interval=60m`, {
       params: {
+        period1: Number(dateOld.toFixed(0)),
+        period2: Number(dateNow.toFixed(0)),
         ...requestChartParams,
-        interval: '5m',
-        range: '5d',
       },
     })
 
     return response?.data?.chart?.result[0] ?? false
-  } catch {
+  } catch (e) {
+    console.log(e)
+    return false
+  }
+}
+
+export async function sendChartImage(chartData: any, user: number) {
+  try {
+    const response = await axiosGoChartAPI.post(`/analytics`, {
+      chartData,
+      user,
+      token: process.env.BOT_TOKEN,
+    })
+
+    return true
+  } catch (e) {
     return false
   }
 }
