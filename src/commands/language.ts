@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from 'fs'
 import { safeLoad } from 'js-yaml'
 import { TelegramLanguage } from '../models'
 import { sendTimzone } from './timezone'
+import { defaultKeyboard } from './help'
 
 export function sendLanguage(ctx: ContextMessageUpdate) {
   return ctx.reply(
@@ -34,6 +35,7 @@ export async function handleLanguage(ctx: ContextMessageUpdate) {
     ctx.i18n.t('language_selected'),
     { parse_mode: 'HTML' },
   )
+  await ctx.reply('done', defaultKeyboard(ctx))
   if (ctx.dbuser.session?.stage === 'languageSelected') {
     return sendTimzone(ctx)
   }
