@@ -45,7 +45,10 @@ export async function handleTickerChart(ctx: ContextMessageUpdate) {
   const indexesCalculated = await calculateIndexes(ticker)
 
   if (!indexesCalculated || !indexesCalculated.psar) {
-    return ''
+    await ctx.answerCbQuery(
+      'No data provided to plott chart for this ticker',
+      true,
+    )
   }
 
   try {
