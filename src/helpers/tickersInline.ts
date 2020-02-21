@@ -49,6 +49,7 @@ export async function handleTickerChart(ctx: ContextMessageUpdate) {
       'No data provided to plott chart for this ticker',
       true,
     )
+    return
   }
 
   try {
