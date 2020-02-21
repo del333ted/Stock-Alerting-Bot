@@ -50,6 +50,7 @@ export async function handleTickerChart(ctx: ContextMessageUpdate) {
 
   try {
     await ctx.telegram.sendChatAction(ctx.from.id, 'upload_photo')
+
     const sendedChart = await sendChartImage(
       {
         X: indexesCalculated.timestamp,
@@ -120,7 +121,7 @@ export function buildTickerManagementKeyboard(ctx, symbol: string) {
         m.callbackButton(ctx.i18n.t('update'), `u_${symbol}`),
         m.callbackButton(ctx.i18n.t('addToFavorite'), `f_${symbol}`),
       ],
-      [m.callbackButton(ctx.i18n.t('chart'), `ch${symbol}`)],
+      [m.callbackButton(ctx.i18n.t('chart'), `cg${symbol}`)],
     )
   }
   return m.inlineKeyboard(result)
