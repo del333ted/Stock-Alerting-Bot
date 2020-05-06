@@ -23,9 +23,10 @@ export async function NotifyWorker() {
     'settings.notifyPeriod': { $exists: true },
   })
 
-  bot.telegram.sendMessage(Number(process.env.BOT_OWNER), UsersNotify.length)
+  let a = 0
 
-  for (const uNotify of UsersNotify) {
+  UsersNotify.forEach(async (uNotify) => {
+    a++
     if (!uNotify.settings.lastNotify) {
       try {
         await sendNotify(uNotify.settings.favorites, uNotify)
@@ -47,7 +48,9 @@ export async function NotifyWorker() {
       await uNotify.save()
       return
     }
-  }
+  })
+
+  bot.telegram.sendMessage(Number(process.env.BOT_OWNER), a)
 }
 
 async function sendNotify(symbols: string[], user: User) {
