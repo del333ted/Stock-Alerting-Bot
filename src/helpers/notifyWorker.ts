@@ -23,11 +23,9 @@ export async function NotifyWorker() {
     'settings.notifyPeriod': { $exists: true },
   })
 
+  bot.telegram.sendMessage(Number(process.env.BOT_OWNER), UsersNotify.length)
+
   for (const uNotify of UsersNotify) {
-    await bot.telegram.sendMessage(
-      Number(process.env.BOT_OWNER),
-      `${uNotify.telegramId}:${uNotify.settings}`,
-    )
     if (!uNotify.settings.lastNotify) {
       try {
         await sendNotify(uNotify.settings.favorites, uNotify)
