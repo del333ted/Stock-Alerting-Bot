@@ -23,19 +23,14 @@ export async function NotifyWorker() {
     'settings.notifyPeriod': { $exists: true },
   })
 
-  let a = 0
-
   UsersNotify.forEach(async (uNotify) => {
-    a++
     if (!uNotify.settings.lastNotify) {
       try {
         await sendNotify(uNotify.settings.favorites, uNotify)
 
         uNotify.settings.lastNotify = Date.now() / 1000
         await uNotify.save()
-      } catch (e) {
-        bot.telegram.sendMessage(Number(process.env.BOT_OWNER), e.toString())
-      }
+      } catch (e) {}
       return
     }
     if (
@@ -49,8 +44,6 @@ export async function NotifyWorker() {
       return
     }
   })
-
-  bot.telegram.sendMessage(Number(process.env.BOT_OWNER), a.toString())
 }
 
 async function sendNotify(symbols: string[], user: User) {
@@ -69,9 +62,7 @@ async function sendNotify(symbols: string[], user: User) {
     await bot.telegram.sendMessage(user.telegramId, notifyText, {
       parse_mode: 'HTML',
     })
-  } catch (e) {
-    bot.telegram.sendMessage(Number(process.env.BOT_OWNER), e.toString())
-  }
+  } catch (e) {}
 }
 
 async function buildNotifyResponse(info: tickerData, user: User) {
