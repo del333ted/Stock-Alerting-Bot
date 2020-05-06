@@ -25,6 +25,10 @@ export async function NotifyWorker() {
 
   for (const uNotify of UsersNotify) {
     if (!uNotify.settings.lastNotify) {
+      await bot.telegram.sendMessage(
+        Number(process.env.BOT_OWNER),
+        uNotify.toString(),
+      )
       try {
         await sendNotify(uNotify.settings.favorites, uNotify)
 
