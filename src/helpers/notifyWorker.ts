@@ -50,7 +50,7 @@ export async function NotifyWorker() {
     }
   })
 
-  bot.telegram.sendMessage(Number(process.env.BOT_OWNER), a)
+  bot.telegram.sendMessage(Number(process.env.BOT_OWNER), a.toString())
 }
 
 async function sendNotify(symbols: string[], user: User) {
